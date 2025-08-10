@@ -152,70 +152,65 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-4 items-center">
-          <MotionReveal y={16} delay={0.05}>
-      <h1 className="headline text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] text-slate-900 md:whitespace-nowrap">
-  The Ultimate Implant Course
-</h1>
+     {/* Hero */}
+<section className="relative overflow-hidden">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 flex flex-col items-center text-center">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="w-full max-w-3xl"
+    >
+      {/* Headline */}
+      <h1 className="headline text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] text-slate-900">
+        The Ultimate Implant Course
+      </h1>
 
-          </MotionReveal>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="lg:order-first"
-          >
-            <p className="mt-4 text-lg text-slate-600">
-              No jargon. No fluff. Just clear, clinic-ready implant protocols.
-            </p>
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <a
-                id="enroll"
-                href="#pricing"
-                className="inline-flex items-center justify-center rounded-2xl px-6 py-3 bg-slate-900 text-white font-semibold"
-              >
-                Enroll Now
-              </a>
-              <a
-                href="#preview"
-                className="inline-flex items-center justify-center rounded-2xl px-6 py-3 border border-slate-300 font-semibold"
-              >
-                Watch Preview
-              </a>
-            </div>
-            <div className="mt-6 flex items-center gap-6 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" /> Certificate on completion
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> Lifetime access
-              </div>
-            </div>
-            <div className="mt-4 text-sm text-slate-600">
-              Trusted by over <span className="font-semibold">1,000+</span> dentists in
-              India.
-            </div>
-          </motion.div>
+      {/* Description */}
+      <p className="mt-4 text-lg text-slate-600">
+        No jargon. No fluff. Just clear, clinic-ready implant protocols.
+      </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <div className="aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
-              <button className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2">
-                <Video className="w-5 h-5" /> Course Trailer
-              </button>
-            </div>
-            <p id="preview" className="sr-only">
-              Preview video placeholder
-            </p>
-          </motion.div>
+      {/* Buttons */}
+      <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          id="enroll"
+          href="#pricing"
+          className="inline-flex items-center justify-center rounded-2xl px-6 py-3 bg-slate-900 text-white font-semibold"
+        >
+          Enroll Now
+        </a>
+        <a
+          href="#preview"
+          className="inline-flex items-center justify-center rounded-2xl px-6 py-3 border border-slate-300 font-semibold"
+        >
+          Watch Preview
+        </a>
+      </div>
+
+      {/* Badges */}
+      <div className="mt-6 flex flex-col sm:flex-row gap-6 text-sm text-slate-600 justify-center">
+        <div className="flex items-center gap-2">
+          <Shield className="w-4 h-4" /> Certificate on completion
         </div>
-      </section>
-      <ImplantHero />
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4" /> Lifetime access
+        </div>
+      </div>
+      <div className="mt-4 text-sm text-slate-600">
+        Trusted by over <span className="font-semibold">1,000+</span> dentists in India.
+      </div>
+
+      {/* Course Trailer */}
+      <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
+        <button className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2">
+          <Video className="w-5 h-5" /> Course Trailer
+        </button>
+      </div>
+      <p id="preview" className="sr-only">Preview video placeholder</p>
+    </motion.div>
+  </div>
+</section>
 
 
       {/* What we do */}
