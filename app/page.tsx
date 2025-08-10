@@ -195,23 +195,24 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center">Curriculum Overview</h2>
           <div className="mt-10 grid lg:grid-cols-2 gap-6">
-            {modules.map((m, idx) => (
-              <div key={idx} className="rounded-2xl border border-slate-200 p-6">
-                <div className="text-xs uppercase tracking-wide text-slate-500">{m.week}</div>
-                <div className="mt-1 font-semibold text-lg">{m.title}</div>
-                <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                  {m.bullets.map((b, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 mt-0.5"/>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+           {modules.map((m, idx) => (
+  <MotionReveal
+    key={idx}
+    delay={idx * 0.05}
+    className="rounded-2xl border border-slate-200 p-6"
+  >
+    <div className="text-xs uppercase tracking-wide text-slate-500">{m.week}</div>
+    <div className="mt-1 font-semibold text-lg">{m.title}</div>
+    <ul className="mt-4 space-y-2 text-sm text-slate-700">
+      {m.bullets.map((b, i) => (
+        <li key={i} className="flex items-start gap-2">
+          <CheckCircle2 className="w-4 h-4 mt-0.5" />
+          <span>{b}</span>
+        </li>
+      ))}
+    </ul>
+  </MotionReveal>
+))}
 
       {/* FAQ + Guarantee */}
       <section id="faq" className="py-16">
