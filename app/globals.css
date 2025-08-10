@@ -84,3 +84,10 @@ footer {
 @keyframes fadeIn {
   to { opacity: 1; }
 }
+/* Headline font */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&display=swap');
+
+.headline {
+  font-family: 'Sora', sans-serif;
+  letter-spacing: -0.02em;
+}
