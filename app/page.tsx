@@ -212,6 +212,7 @@ export default function Page() {
   </div>
 </section>
 
+<ImplantHero />
 
       {/* What we do */}
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
