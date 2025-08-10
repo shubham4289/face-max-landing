@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
+import ImplantHero from "./components/ImplantHero";
+
 
 const features = [
   {
@@ -212,6 +214,8 @@ export default function Page() {
           </motion.div>
         </div>
       </section>
+      <ImplantHero />
+
 
       {/* What we do */}
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
