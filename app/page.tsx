@@ -198,8 +198,13 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-4 text-sm text-slate-600">
-        Trusted by over <span className="font-semibold">1,000+</span> dentists in India.
+        Trusted by over <span className="font-semibold">1,000+</span> dentists worldwide.
       </div>
+      <div className="mt-3 text-base text-slate-700">
+  After you complete the course, our team of surgeons will personally guide you through your first 
+  <span className="text-2xl font-bold text-slate-900"> 100 implant cases</span>.
+</div>
+
 
       {/* Course Trailer */}
       <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
