@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, GraduationCap, Shield, Clock, Video, Star, ArrowRight, IndianRupee } from "lucide-react";
 import "./globals.css";
+import MotionReveal from "./components/MotionReveal";
 
 const features = [
   { icon: <GraduationCap className="w-6 h-6" aria-hidden />, title: "Doctor‑level content", text: "Designed for clinicians only—no fluff, 100% surgical and prosthetic protocols." },
@@ -117,21 +118,18 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center">Why this course</h2>
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
-                  {f.icon}
-                </div>
-                <h3 className="mt-4 font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{f.text}</p>
-              </motion.div>
+           {features.map((f, i) => (
+  <MotionReveal
+    key={i}
+    delay={i * 0.05}
+    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+  >
+    <div className="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
+      {f.icon}
+    </div>
+    <h3 className="mt-4 font-semibold">{f.title}</h3>
+    <p className="mt-2 text-sm text-slate-600">{f.text}</p>
+  </MotionReveal>
             ))}
           </div>
         </div>
