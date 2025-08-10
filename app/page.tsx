@@ -180,20 +180,16 @@ export default function Page() {
   <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <h2 className="text-3xl font-bold text-center">What doctors say</h2>
     <div className="mt-10 grid md:grid-cols-3 gap-6">
-      {testimonials.map((t, i) => (
-        <MotionReveal
-          key={i}
-          delay={i * 0.1}
-          className="rounded-2xl border p-6 bg-white shadow-sm transition transform hover:-translate-y-1 hover:shadow-lg"
-        >
-          <p className="italic">“{t.text}”</p>
-          <div className="mt-4 font-semibold">{t.name}</div>
-        </MotionReveal>
-      ))}
-    </div>
-  </div>
-</section>
-
+     {testimonials.map((t, i) => (
+  <MotionReveal
+    key={i}
+    delay={i * 0.1}
+    className="rounded-2xl border p-6 bg-white shadow-sm transition transform hover:-translate-y-1 hover:shadow-lg"
+  >
+    <p className="italic">“{t.text}”</p>
+    <div className="mt-4 font-semibold">{t.name}</div>
+  </MotionReveal>
+))}
 
       {/* Curriculum */}
       <section id="curriculum" className="py-16 bg-white">
