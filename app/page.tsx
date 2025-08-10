@@ -156,8 +156,8 @@ export default function Page() {
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-4 items-center">
           <MotionReveal y={16} delay={0.05}>
-          <h1 className="headline text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] text-slate-900">
-  The Ultimate<br />Implant Course
+      <h1 className="headline text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] text-slate-900 md:whitespace-nowrap">
+  The Ultimate Implant Course
 </h1>
 
           </MotionReveal>
