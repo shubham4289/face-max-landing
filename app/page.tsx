@@ -189,20 +189,17 @@ export default function Page() {
       </div>
 
       {/* Badges */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-6 text-sm text-slate-600 justify-center">
-        <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4" /> Certificate on completion
-        </div>
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4" /> Lifetime access
-        </div>
-      </div>
-      <div className="mt-4 text-sm text-slate-600">
-        Trusted by over <span className="font-semibold">1,000+</span> dentists worldwide.
-      </div>
-      <div className="mt-3 text-base text-slate-700">
-  After you complete the course, our team of surgeons will personally guide you through your first 
-  <span className="text-2xl font-bold text-slate-900"> 100 implant cases</span>.
+      <div className="mt-6 flex items-center gap-6 text-base md:text-lg font-bold font-headline text-slate-900">
+  <div className="flex items-center gap-2"><Shield className="w-5 h-5"/> Certificate on completion</div>
+  <div className="flex items-center gap-2"><Clock className="w-5 h-5"/> Lifetime access</div>
+</div>
+
+<div className="mt-4 text-base md:text-lg font-bold font-headline text-slate-900">
+  Trusted by over <span className="font-extrabold">1,000+</span> dentists worldwide.
+</div>
+
+<div className="mt-4 text-lg md:text-xl font-bold font-headline text-slate-900">
+  After you complete the course, our team of surgeons will personally guide you through your first <span className="text-2xl md:text-3xl font-extrabold">100 implant cases</span>.
 </div>
 
 
