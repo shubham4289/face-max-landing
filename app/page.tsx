@@ -99,38 +99,65 @@ const features = [
 const modules = [
   {
     week: "Module 1",
-    title: "Diagnostics & Case Selection",
+    title: "Foundations of Implantology",
     bullets: [
-      "CBCT reading essentials for implants",
-      "Risk assessment: sinus, nerve, bone quality",
-      "Treatment planning worksheet (download)",
+      "What implants are & when they’re indicated",
+      "Science behind predictable, lasting results",
+      "Indications vs contraindications",
     ],
   },
   {
     week: "Module 2",
-    title: "Surgical Protocols",
+    title: "Surgical Anatomy & Biological Considerations",
     bullets: [
-      "Incisions, flap design & suturing",
-      "Osteotomy sequence by bone type",
-      "Immediate vs delayed placement",
+      "Jawbone & soft tissue anatomy essentials",
+      "Assessing bone density for implant stability",
+      "Nerve positioning & surgical safety landmarks",
     ],
   },
   {
     week: "Module 3",
-    title: "Prosthetic Phase",
+    title: "Armamentarium & Implant Systems",
     bullets: [
-      "Abutment selection & torque charts",
-      "Impressions: implant- vs abutment-level",
-      "Cement- vs screw-retained crowns",
+      "Complete surgical kit walkthrough",
+      "Understanding mini vs standard implant systems",
+      "Choosing the right implant design for the case",
     ],
   },
   {
     week: "Module 4",
-    title: "Complications & Rescue",
+    title: "Treatment Planning & Case Selection Mastery",
     bullets: [
-      "Loose crowns/abutment fracture",
-      "Peri-implantitis protocols",
-      "When to refer & fail-safes",
+      "Medical & dental history evaluation",
+      "CBCT interpretation & site mapping",
+      "Risk assessment & site suitability protocols",
+    ],
+  },
+  {
+    week: "Module 5",
+    title: "Surgical Protocols: From Flap to Final Suture",
+    bullets: [
+      "Pre-surgical preparation checklist",
+      "Drilling sequences & insertion techniques",
+      "Flap closure & suturing for optimal healing",
+    ],
+  },
+  {
+    week: "Module 6",
+    title: "Post-Operative Care, Healing & Complication Prevention",
+    bullets: [
+      "Evidence-based patient aftercare",
+      "Pain, swelling, & inflammation control",
+      "Proactive complication prevention strategies",
+    ],
+  },
+  {
+    week: "Module 7",
+    title: "Prosthetic Phase & Long-Term Success",
+    bullets: [
+      "Abutment selection & crown placement workflow",
+      "Impression techniques for precision fit",
+      "Delivering restorations with function & aesthetics",
     ],
   },
 ];
