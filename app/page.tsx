@@ -74,17 +74,17 @@ const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
 
 const features = [
   {
-    icon: <IconImplant className="w-6 h-6" />,
+    icon: <img src="/icons/implant.png" alt="Dental implant icon" className="w-7 h-7" />,
     title: "Every Clinical Scenario Covered",
     text: "From single tooth to full arch — master protocols for every type of case you’ll encounter in real practice.",
   },
   {
-    icon: <IconScalpel className="w-6 h-6" />,
+    icon: <img src="/icons/scalpel.png" alt="Scalpel icon" className="w-7 h-7" />,
     title: "Step-by-Step Surgical Clarity",
     text: "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
   },
   {
-    icon: <IconAlertTooth className="w-6 h-6" />,
+    icon: <img src="/icons/alert-tooth.png" alt="Alert tooth icon" className="w-7 h-7" />,
     title: "Complication Management Mastery",
     text: "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
   },
@@ -94,7 +94,6 @@ const features = [
     text: "Every protocol mapped to literature and real-world decision trees.",
   },
 ];
-
 
 
 const modules = [
