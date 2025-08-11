@@ -14,34 +14,63 @@ import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 
-/* Simple inline icons */
+/* ===== Clean, balanced icons (keep wrapper the same) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-    {/* shoulder */}
-    <rect x="7" y="2.5" width="10" height="4" rx="2" />
-    {/* body */}
-    <path d="M9 6.5h6c0 6-2 9-3 14-.5 2-2.5 2-3 0-1-5-3-8-3-14h3Z" />
-    {/* simple threads */}
-    <path d="M9 9.5h6M8.7 11.5h6.6M8.4 13.5h7.2M8.2 15.5h7.6" strokeLinecap="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    {/* head */}
+    <rect x="7" y="3" width="10" height="4" rx="2" />
+    {/* body taper */}
+    <path d="M9 7h6c0 5.5-2 8.5-3 13-.3 1.2-1.7 1.2-2 0-1-4.5-3-7.5-3-13h2z" />
+    {/* threads */}
+    <path d="M9 10h6M8.8 12h6.4M8.6 14h6.8M8.4 16h7.2" />
   </svg>
 );
 
 const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-    <path d="M3 17l7-7c.6-.6 1.6-.6 2.2 0l1.8 1.8c.6.6.6 1.6 0 2.2L7 21" />
-    <path d="M7 21h9l5-5" strokeLinecap="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    {/* handle */}
+    <path d="M3.5 17.5 L12 9" />
+    {/* blade (simple wedge) */}
+    <path d="M13 9.5 L21 17 L18 20 L10 12" />
+    {/* cutting edge support */}
+    <path d="M7 21h9l5-5" />
   </svg>
 );
 
 const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-    {/* tooth */}
-    <path d="M8 4c2-1.5 6-1.5 8 0 2 1.6 2 4.6.5 6.3-1.2 1.4-1.6 3.7-2 5.2-.3 1-1.7 1-2 0-.4-1.5-.8-3.8-2-5.2C6 8.6 6 5.6 8 4Z" />
-    {/* small alert triangle */}
-    <path d="M3 14l2.2-3.8c.2-.3.6-.3.8 0L9 14c.2.3 0 .8-.4.8H3.4c-.4 0-.6-.5-.4-.8Z" />
-    <path d="M6 12.6v1.2M6 15.2h0" strokeLinecap="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    {/* tooth outline */}
+    <path d="M8.5 4.2c2-1.4 5-1.4 7 0 1.9 1.4 2.1 4.2.6 5.9-.9 1-1.4 2.6-1.8 4-.3 1-1.7 1-2 0-.4-1.4-.9-3-1.8-4C6.9 8.4 6.6 5.6 8.5 4.2Z" />
+    {/* small alert triangle at upper-left */}
+    <path d="M3.2 10.4l2-3.5c.2-.3.6-.3.8 0l2 3.5c.2.3 0 .7-.4.7H3.6c-.4 0-.6-.4-.4-.7Z" />
+    <path d="M5.2 8.8v1.1M5.2 11.2h0" />
   </svg>
 );
+
 
 const features = [
   {
