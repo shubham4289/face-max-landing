@@ -159,12 +159,12 @@ const faqs = [
 
 const testimonials = [
   {
-    name: "Dr. A. Mehta, MDS",
+    name: "Dr. Emily Carter, DDS – USA",
     text:
       "The decision trees alone are worth the fee. Helped me standardize my flap design and torque protocol.",
   },
   {
-    name: "Dr. R. Khan, BDS",
+    name: "Dr. Sophia Williams, DDS – USA",
     text:
       "Clean videos, literature references, and practical pearls. Placed my first two cases confidently.",
   },
@@ -352,11 +352,11 @@ export default function Page() {
               </p>
               <ul className="mt-6 space-y-2 text-sm text-slate-700">
                 {[
-                  "Treatment planning basics & CBCT evaluation",
-                  "Benchtop play-by-play + surgical demos",
-                  "Tools of the trade & torque charts",
-                  "Complications management (loose crown, abutment fracture, peri-implantitis)",
-                  "Lifetime access + downloads",
+                  "Treatment Planning & CBCT Mastery",
+                  "Surgical & Prosthetic Protocols in Depth",
+                  "Crisp Video Demonstrations on Models",
+                  "Complication Management Strategies",
+                  "Lifetime Access & Continuous Updates",
                 ].map((b, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 mt-0.5" /> {b}
@@ -381,13 +381,13 @@ export default function Page() {
                   <CheckCircle2 className="w-4 h-4 mt-0.5" /> Lifetime access to all modules
                 </li>
                 <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Downloadable checklists & templates
+                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Step-by-step surgical & prosthetic walkthroughs for real-world scenarios
                 </li>
                 <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Certificate on completion
+                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Priority answers to your clinical queries by the mentor team
                 </li>
                 <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> 3 live case discussions (Pro)
+                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Direct access to course mentors for clinical guidance
                 </li>
               </ul>
               <a
