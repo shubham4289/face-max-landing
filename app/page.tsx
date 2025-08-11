@@ -229,9 +229,12 @@ export default function Page() {
       {/* What we do */}
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center">
-            Focused on making implants intuitive
-          </h2>
+          <MotionReveal y={12} delay={0.05}>
+  <h2 className="text-3xl font-bold text-center">
+    From <span className="font-extrabold text-4xl">confusion to</span> complete <span className="font-extrabold text-4xl text-slate-900">confidence</span>
+  </h2>
+</MotionReveal>
+
           <div className="mt-10 grid md:grid-cols-3 gap-6">
             <div className="rounded-2xl border p-6">
               <h3 className="font-semibold">Books & Checklists</h3>
