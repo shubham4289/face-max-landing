@@ -14,6 +14,35 @@ import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 
+/* Simple inline icons */
+const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+    {/* shoulder */}
+    <rect x="7" y="2.5" width="10" height="4" rx="2" />
+    {/* body */}
+    <path d="M9 6.5h6c0 6-2 9-3 14-.5 2-2.5 2-3 0-1-5-3-8-3-14h3Z" />
+    {/* simple threads */}
+    <path d="M9 9.5h6M8.7 11.5h6.6M8.4 13.5h7.2M8.2 15.5h7.6" strokeLinecap="round" />
+  </svg>
+);
+
+const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+    <path d="M3 17l7-7c.6-.6 1.6-.6 2.2 0l1.8 1.8c.6.6.6 1.6 0 2.2L7 21" />
+    <path d="M7 21h9l5-5" strokeLinecap="round" />
+  </svg>
+);
+
+const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+    {/* tooth */}
+    <path d="M8 4c2-1.5 6-1.5 8 0 2 1.6 2 4.6.5 6.3-1.2 1.4-1.6 3.7-2 5.2-.3 1-1.7 1-2 0-.4-1.5-.8-3.8-2-5.2C6 8.6 6 5.6 8 4Z" />
+    {/* small alert triangle */}
+    <path d="M3 14l2.2-3.8c.2-.3.6-.3.8 0L9 14c.2.3 0 .8-.4.8H3.4c-.4 0-.6-.5-.4-.8Z" />
+    <path d="M6 12.6v1.2M6 15.2h0" strokeLinecap="round" />
+  </svg>
+);
+
 
 const features = [
   {
