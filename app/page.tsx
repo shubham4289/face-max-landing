@@ -1,10 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  LucideDentalImplant,
-  LucideScalpel,
-  LucideAlertTooth,
+import {
   Shield,
   CheckCircle2,
   Video,
@@ -48,30 +45,27 @@ const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
 
 const features = [
   {
-    icon: <LucideDentalImplant className="w-6 h-6" aria-hidden />,
+    icon: <IconImplant className="w-6 h-6" />,
     title: "Every Clinical Scenario Covered",
-    text:
-      "From single tooth to full arch — master protocols for every type of case you’ll encounter in real practice.",
+    text: "From single tooth to full arch — master protocols for every type of case you’ll encounter in real practice.",
   },
   {
-    icon: <LucideScalpel className="w-6 h-6" aria-hidden />,
+    icon: <IconScalpel className="w-6 h-6" />,
     title: "Step-by-Step Surgical Clarity",
-    text:
-      "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
+    text: "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
   },
   {
-    icon: <LucideAlertTooth className="w-6 h-6" aria-hidden />,
+    icon: <IconAlertTooth className="w-6 h-6" />,
     title: "Complication Management Mastery",
-    text:
-      "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
+    text: "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
   },
   {
     icon: <Shield className="w-6 h-6" aria-hidden />,
     title: "Evidence-based",
-    text:
-      "Every protocol mapped to literature and real-world decision trees.",
+    text: "Every protocol mapped to literature and real-world decision trees.",
   },
 ];
+
 
 
 const modules = [
