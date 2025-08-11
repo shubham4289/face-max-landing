@@ -14,7 +14,7 @@ import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 
-/* ===== Clear, recognisable minimal icons (work well small) ===== */
+/* ===== Clean, balanced icons (keep wrapper the same) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
@@ -25,12 +25,12 @@ const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* cap */}
+    {/* head */}
     <rect x="7" y="3" width="10" height="4" rx="2" />
-    {/* straight shank to point */}
-    <path d="M9 7 L15 7 L12 20 L9 7 Z" />
-    {/* diagonal threads */}
-    <path d="M9.5 10.5 L14.5 8.8M9.2 13 L14.2 11.3M9 15.5 L14 13.8" />
+    {/* body taper */}
+    <path d="M9 7h6c0 5.5-2 8.5-3 13-.3 1.2-1.7 1.2-2 0-1-4.5-3-7.5-3-13h2z" />
+    {/* threads */}
+    <path d="M9 10h6M8.8 12h6.4M8.6 14h6.8M8.4 16h7.2" />
   </svg>
 );
 
@@ -45,29 +45,11 @@ const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
     {...props}
   >
     {/* handle */}
-    <path d="M4 18 L11 11" />
-    {/* blade (clear wedge) */}
-    <path d="M11 11 L20 18 L17.5 20.5 L9 13 Z" />
-    {/* table edge / support line */}
-    <path d="M7 21 H18" />
-  </svg>
-);
-
-const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    {/* tooth outline with two roots */}
-    <path d="M8.5 4.5c2-1.2 5-1.2 7 0 1.8 1.1 2.2 3.7 1 5.4-.8 1.1-1.2 2.8-1.6 4.3-.3 1-1.6 1-1.9 0-.5-1.7-1.1-3.2-2.5-4.2-1.4 1-2 2.5-2.5 4.2-.3 1-1.6 1-1.9 0-.4-1.5-.8-3.2-1.6-4.3-1.3-1.7-.9-4.3 1-5.4Z" />
-    {/* alert triangle + dot, separated so it reads instantly */}
-    <path d="M18 4.2l2.2 3.8c.2.3 0 .8-.4.8h-4.4c-.4 0-.6-.5-.4-.8L17 4.2c.2-.3.8-.3 1 0Z" />
-    <path d="M17.99 6.4v1.2M17.99 9h0" />
+    <path d="M3.5 17.5 L12 9" />
+    {/* blade (simple wedge) */}
+    <path d="M13 9.5 L21 17 L18 20 L10 12" />
+    {/* cutting edge support */}
+    <path d="M7 21h9l5-5" />
   </svg>
 );
 
