@@ -46,32 +46,33 @@ const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-
 const features = [
   {
     icon: <LucideDentalImplant className="w-6 h-6" aria-hidden />,
-    title: "Covers every real-world scenario",
+    title: "Every Clinical Scenario Covered",
     text:
-      "From routine cases to rare surgical situations, you'll know exactly what to do in the chair.",
+      "From single tooth to full arch — master protocols for every type of case you’ll encounter in real practice.",
   },
   {
     icon: <LucideScalpel className="w-6 h-6" aria-hidden />,
-    title: "Surgical techniques made clear",
+    title: "Step-by-Step Surgical Clarity",
     text:
-      "Flap design, bone management, and precision osteotomy explained step-by-step.",
+      "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
   },
   {
     icon: <LucideAlertTooth className="w-6 h-6" aria-hidden />,
-    title: "Implant complications — mastered",
+    title: "Complication Management Mastery",
     text:
-      "Every complication covered with clear prevention and management strategies.",
+      "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
   },
   {
     icon: <Shield className="w-6 h-6" aria-hidden />,
     title: "Evidence-based",
-    text: "Every protocol mapped to literature and real-world decision trees.",
+    text:
+      "Every protocol mapped to literature and real-world decision trees.",
   },
 ];
+
 
 const modules = [
   {
