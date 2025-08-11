@@ -230,10 +230,14 @@ export default function Page() {
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <MotionReveal y={12} delay={0.05}>
-  <h2 className="text-3xl font-bold text-center">
-    From <span className="font-bold text-lg">confusion to</span> complete <span className="font-bold text-lg">confidence</span>
+  <h2 className="text-3xl md:text-4xl font-bold text-center">
+    <span className="font-bold">From</span>{' '}
+    <span className="text-lg font-normal">confusion to</span>{' '}
+    <span className="font-bold">complete</span>{' '}
+    <span className="font-bold">confidence</span>
   </h2>
 </MotionReveal>
+
 
 
           <div className="mt-10 grid md:grid-cols-3 gap-6">
@@ -247,7 +251,7 @@ export default function Page() {
             <div className="rounded-2xl border p-6">
               <h3 className="font-semibold">Online Courses</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Implant Surgery to prosthetic everything step-by-step from beginner to advanced.
+                Implant Surgery to prosthetic, everything step-by-step from beginner to advanced level.
               </p>
             </div>
             <div className="rounded-2xl border p-6">
