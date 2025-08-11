@@ -240,20 +240,20 @@ export default function Page() {
             <div className="rounded-2xl border p-6">
               <h3 className="font-semibold">Books & Checklists</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Crisp, clear, to the point. Print-ready PDFs that simplify—not
+                Crisp, clear, to the point. PDFs that simplify—not
                 complicate.
               </p>
             </div>
             <div className="rounded-2xl border p-6">
               <h3 className="font-semibold">Online Courses</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Implant Surgery 101 to AOX & GBR—step-by-step with decision trees.
+                Implant Surgery to prosthetic everything step-by-step from beginner to advanced.
               </p>
             </div>
             <div className="rounded-2xl border p-6">
               <h3 className="font-semibold">Community</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Judgement-free WhatsApp/Discord for case discussions & quick help.
+                Judgement-free Telegram group for case discussions & quick help.
               </p>
             </div>
           </div>
