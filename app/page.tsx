@@ -1,14 +1,17 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  CheckCircle2,
-  GraduationCap,
+import { 
+  LucideDentalImplant,
+  LucideScalpel,
+  LucideAlertTooth,
   Shield,
-  Clock,
+  CheckCircle2,
   Video,
+  Star,
   ArrowRight,
   IndianRupee,
+  Clock
 } from "lucide-react";
 import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
@@ -46,22 +49,22 @@ const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
 
 const features = [
   {
-    icon: <GraduationCap className="w-6 h-6" aria-hidden />,
-    title: "Doctor-level content",
+    icon: <LucideDentalImplant className="w-6 h-6" aria-hidden />,
+    title: "Covers every real-world scenario",
     text:
-      "Designed for clinicians only—no fluff, 100% surgical and prosthetic protocols.",
+      "From routine cases to rare surgical situations, you'll know exactly what to do in the chair.",
   },
   {
-    icon: <Video className="w-6 h-6" aria-hidden />,
-    title: "HD surgical demos",
+    icon: <LucideScalpel className="w-6 h-6" aria-hidden />,
+    title: "Surgical techniques made clear",
     text:
-      "Step-by-step cases, flap design, osteotomy, immediate loading & complications.",
+      "Flap design, bone management, and precision osteotomy explained step-by-step.",
   },
   {
-    icon: <Clock className="w-6 h-6" aria-hidden />,
-    title: "Self-paced + Lifetime access",
+    icon: <LucideAlertTooth className="w-6 h-6" aria-hidden />,
+    title: "Implant complications — mastered",
     text:
-      "Bite-sized modules with worksheets, checklists and downloadable templates.",
+      "Every complication covered with clear prevention and management strategies.",
   },
   {
     icon: <Shield className="w-6 h-6" aria-hidden />,
