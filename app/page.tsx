@@ -231,9 +231,10 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <MotionReveal y={12} delay={0.05}>
   <h2 className="text-3xl font-bold text-center">
-    From <span className="font-extrabold text-4xl">confusion to</span> complete <span className="font-extrabold text-4xl text-slate-900">confidence</span>
+    From <span className="font-bold text-[#c1d8de]">confusion to</span> complete <span className="font-bold text-[#c1d8de]">confidence</span>
   </h2>
 </MotionReveal>
+
 
           <div className="mt-10 grid md:grid-cols-3 gap-6">
             <div className="rounded-2xl border p-6">
