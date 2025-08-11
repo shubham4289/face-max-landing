@@ -346,10 +346,9 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
-              <h2 className="text-3xl font-bold">Implant Surgery 101 — Face Max Edition</h2>
+              <h2 className="text-3xl font-bold">The Ultimate Implant Course — Face Max Signature</h2>
               <p className="mt-3 text-slate-700">
-                Treatment planning to complications, taught with Indian clinical
-                realities—armamentarium, costs, and chairside hacks.
+                From diagnosis to Implant crown — a complete, Implant literature-backed pathway for dentists worldwide, from beginner to expert, combining Face Max’s signature hands-on clarity with proven real-world protocols
               </p>
               <ul className="mt-6 space-y-2 text-sm text-slate-700">
                 {[
