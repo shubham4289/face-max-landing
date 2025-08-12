@@ -172,6 +172,8 @@ const testimonials = [
 ];
 
 export default function Page() {
+    const [trailerOpen, setTrailerOpen] = useState(false);
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
       {/* Header */}
