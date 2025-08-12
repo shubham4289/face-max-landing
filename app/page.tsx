@@ -514,26 +514,29 @@ export default function Page() {
             </div>
             <div className="rounded-2xl border p-6 bg-white">
   <h3 className="font-semibold flex items-center gap-2">
-    <CheckCircle2 className="w-5 h-5 text-green-600" /> One Chance to Level Up — Forever
+    <CheckCircle2 className="w-5 h-5 text-green-600" />
+    One Chance to Level Up — Forever
   </h3>
-  <ul className="mt-2 space-y-2 text-sm text-slate-600">
-    <li className="flex items-start gap-2">
-      <Star className="w-4 h-4 text-yellow-500 mt-0.5" />
-      Miss this and you’ll spend years piecing together half-baked tutorials, wasting cases, and second-guessing your skills.
+
+  <ul className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700">
+    <li className="flex items-start gap-3">
+      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+      <span>Miss this and you’ll spend years piecing together half-baked tutorials, wasting cases, and second-guessing your skills.</span>
     </li>
-    <li className="flex items-start gap-2">
-      <Star className="w-4 h-4 text-yellow-500 mt-0.5" />
-      In just weeks, we hand you the exact frameworks, case protocols, and decision trees that took us a decade to master.
+    <li className="flex items-start gap-3">
+      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+      <span>In just weeks, we hand you the exact frameworks, case protocols, and decision trees that took us a decade to master.</span>
     </li>
-    <li className="flex items-start gap-2">
-      <Star className="w-4 h-4 text-yellow-500 mt-0.5" />
-      Every day you wait, another patient chooses someone else.
+    <li className="flex items-start gap-3">
+      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+      <span>Every day you wait, another patient chooses someone else.</span>
     </li>
-    <li className="flex items-start gap-2">
-      <Star className="w-4 h-4 text-yellow-500 mt-0.5" />
-      Seats are limited, and once this cohort closes — it’s gone.
+    <li className="flex items-start gap-3">
+      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+      <span>Seats are limited, and once this cohort closes — it’s gone.</span>
     </li>
   </ul>
+
   <a
     href="#pricing"
     className="mt-4 inline-flex items-center gap-2 text-slate-900 font-semibold"
@@ -541,6 +544,7 @@ export default function Page() {
     See pricing <ArrowRight className="w-4 h-4" />
   </a>
 </div>
+
 
           </div>
         </div>
