@@ -181,7 +181,7 @@ const faqs = [
   {
     q: "Will I get extra discount on new courses?",
     a:
-      "Yes — as a valued member, you’ll enjoy up to 50% off on all future courses.",
+      "Enroll once, save forever — enjoy a guaranteed 50% off every future course we release.",
   },
 ];
 
