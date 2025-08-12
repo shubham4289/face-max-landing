@@ -406,7 +406,7 @@ export default function Page() {
       </section>
 
       {/* Featured Course — premium hover glow on the price card */}
-      <section id="featured" className="py-16 bg-white">
+      <section id="pricing" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
@@ -613,7 +613,7 @@ export default function Page() {
             <div className="font-semibold">Quick Links</div>
             <ul className="mt-2 space-y-1">
               <li><a href="#what">What we do</a></li>
-              <li><a href="#featured">Featured course</a></li>
+              <section id="pricing" className="py-16 bg-white">
               <li><a href="#pricing">Pricing</a></li>
             </ul>
           </div>
