@@ -591,7 +591,7 @@ export default function Page() {
           </div>
           <div id="contact">
             <div className="font-semibold">Contact</div>
-            <div className="mt-2 text-sm">WhatsApp / Phone: +91-00000-00000</div>
+            <div className="mt-2 text-sm">Email: admin@thefacemax.com</div>
           </div>
         </div>
       </footer>
