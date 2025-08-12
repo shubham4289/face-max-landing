@@ -250,26 +250,26 @@ export default function Page() {
               <span className="mx-1 text-3xl font-extrabold tracking-tight">100</span> implant cases.
             </div>
 
-            {/* Course Trailer */}
-            <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
-              <button className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2">
-                <Video className="w-5 h-5" /> Course Trailer
-              <button onClick={() => setTrailerOpen(true)}
-                className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2 hover:bg-white"
-                >
-                <Video className="w-5 h-5" /> Course Trailer
-              </button>
-                {/* Modal lives near the bottom of the section so it can overlay */}
-                <TrailerModal
-                  open={trailerOpen}
-                  onClose={() => setTrailerOpen(false)}
-                  youtubeId="YOUR_YOUTUBE_ID_HERE" // e.g. "dQw4w9WgXcQ"
-                  // or use a hosted mp4 instead:
-                  // src="/videos/trailer.mp4"
-                  />
+           {/* Course Trailer */}
+<div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
+  <button
+    type="button"
+    onClick={() => setTrailerOpen(true)}
+    className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2 hover:bg-white"
+  >
+    <Video className="w-5 h-5" /> Course Trailer
+  </button>
+</div>
 
-            </div>
-            <p id="preview" className="sr-only">Preview video placeholder</p>
+{/* Modal lives outside the button so it can overlay the page */}
+<TrailerModal
+  open={trailerOpen}
+  onClose={() => setTrailerOpen(false)}
+  youtubeId="YOUR_YOUTUBE_ID_HERE" // e.g., "dQw4w9WgXcQ"
+/>
+
+<p id="preview" className="sr-only">Preview video placeholder</p>
+
           </motion.div>
         </div>
       </section>
