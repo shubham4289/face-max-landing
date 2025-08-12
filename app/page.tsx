@@ -76,7 +76,7 @@ const features = [
   {
     icon: <img src="/icons/implant.png" alt="Dental implant icon" className="w-7 h-7" />,
     title: "Every Clinical Scenario Covered",
-    text: "From single tooth to full arch — master protocols for every type of case you’ll encounter in real practice.",
+    text: "From single implant tooth to multiple implants teeth — master protocols for every type of case you’ll encounter in real practice.",
   },
   {
     icon: <img src="/icons/scalpel.png" alt="Scalpel icon" className="w-7 h-7" />,
@@ -218,7 +218,7 @@ export default function Page() {
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#what" className="hover:opacity-80">
-              What we do
+              What we do?
             </a>
             <a href="#curriculum" className="hover:opacity-80">
               Curriculum
@@ -255,7 +255,7 @@ export default function Page() {
 
       {/* Description */}
       <p className="mt-4 text-lg text-slate-600">
-        No jargon. No fluff. Just clear, clinic-ready implant protocols.
+        Expert-Built • Proven • Precise • Full-Depth • Step-by-Step • Clinic-Ready
       </p>
 
       {/* Buttons */}
@@ -329,14 +329,13 @@ export default function Page() {
 
           <div className="mt-10 grid md:grid-cols-3 gap-6">
             <div className="rounded-2xl border p-6">
-              <h3 className="font-semibold">Books & Checklists</h3>
+              <h3 className="font-semibold">Signature Implantology books </h3>
               <p className="mt-2 text-sm text-slate-600">
-                Crisp, clear, to the point. PDFs that simplify—not
-                complicate.
+                Includes Members-Only 2 Signature Implant Books by Face Max Academy.
               </p>
             </div>
             <div className="rounded-2xl border p-6">
-              <h3 className="font-semibold">Online Courses</h3>
+              <h3 className="font-semibold">Complete Implant Training</h3>
               <p className="mt-2 text-sm text-slate-600">
                 Implant Surgery to prosthetic, everything step-by-step from beginner to advanced level.
               </p>
@@ -384,11 +383,11 @@ export default function Page() {
               </p>
               <ul className="mt-6 space-y-2 text-sm text-slate-700">
                 {[
-                  "Treatment Planning & CBCT Mastery",
+                  "Precision Treatment Planning & CBCT Interpretation Mastery",
                   "Surgical & Prosthetic Protocols in Depth",
                   "Crisp Video Demonstrations on Models",
-                  "Complication Management Strategies",
-                  "Lifetime Access & Continuous Updates",
+                  "Battle-Tested Complication Management Frameworks",
+                  "Permanent Access with Continuous Content Enhancements",
                 ].map((b, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 mt-0.5" /> {b}
@@ -579,13 +578,13 @@ export default function Page() {
             <div className="font-semibold">Quick Links</div>
             <ul className="mt-2 space-y-1">
               <li>
-                <a href="#what">What we do</a>
+                <a href="#what">What we do?</a>
               </li>
               <li>
-                <a href="#featured">Featured course</a>
+                <a href="#featured">Featured Courses</a>
               </li>
               <li>
-                <a href="#pricing">Pricing</a>
+                <a href="#pricing">Pricing & Discounts</a>
               </li>
             </ul>
           </div>
