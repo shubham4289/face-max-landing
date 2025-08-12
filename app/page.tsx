@@ -14,6 +14,9 @@ import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 import DealCountdown from "./components/DealCountdown";
+import TrailerModal from "./components/TrailerModal";
+import { useState } from "react";
+
 
 /* ===== Clean, balanced icons (kept for future use if needed) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
