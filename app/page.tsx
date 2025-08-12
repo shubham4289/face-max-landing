@@ -273,9 +273,13 @@ export default function Page() {
             className="w-full max-w-3xl"
           >
             {/* Headline */}
-            <h1 className="headline text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight text-slate-900">
-              The Ultimate Implant Course
-            </h1>
+           <h1 className="headline text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight text-slate-900">
+             The Ultimate{" "}
+             <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
+               Implant Course
+             </span>
+           </h1>
+
 
             {/* Description */}
             <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
@@ -392,9 +396,12 @@ export default function Page() {
               <MotionReveal
                 key={i}
                 delay={i * 0.05}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition"
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition hover:-translate-y-0.5"
+
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
+                <div className="w-12 h-12 rounded-xl bg-white grid place-items-center text-slate-900
+                ring-1 ring-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,.6)]
+                bg-gradient-to-b from-slate-50 to-slate-100">
                   {f.icon}
                 </div>
                 <h3 className="mt-4 font-semibold">{f.title}</h3>
@@ -429,41 +436,41 @@ export default function Page() {
               </ul>
             </div>
 
-            <div className="group rounded-2xl border-2 border-slate-900 p-7 shadow-sm transition hover:shadow-lg hover:border-amber-400/70 hover:ring-2 hover:ring-amber-300/30">
-              <div className="flex items-center justify-between">
-                <div className="text-xl font-semibold">Face Max Implant Course</div>
-                <div className="text-xs rounded-full bg-slate-900 text-white px-2 py-0.5">
-                  Most Popular
-                </div>
-              </div>
-              <div className="mt-4 flex items-end gap-2">
-                <IndianRupee className="w-5 h-5" />
-                <div className="text-5xl font-extrabold tracking-tight">24,999</div>
-                <div className="text-slate-500 mb-1 text-sm">one-time</div>
-              </div>
-              <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Lifetime access to all modules
-                </li>
-                <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Step-by-step surgical & prosthetic walkthroughs for real-world scenarios
-                </li>
-                <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Priority answers to your clinical queries by the mentor team
-                </li>
-                <li className="flex gap-2 items-start">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5" /> Direct access to course mentors for clinical guidance
-                </li>
-              </ul>
-              <a
-                href="#checkout"
-                className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 text-white px-4 py-3 font-semibold group-hover:bg-slate-800 transition"
-              >
-                Add to Cart
-              </a>
-              <p className="mt-2 text-xs text-slate-500">GST extra if applicable</p>
-            </div>
-          </div>
+            <div className="group relative rounded-2xl p-[2px] bg-gradient-to-br from-slate-900 to-amber-400/60 
+                hover:to-amber-400 transition">
+  <div className="rounded-2xl bg-white p-7 shadow-sm hover:shadow-lg transition">
+    <div className="flex items-center justify-between">
+      <div className="text-xl font-semibold">Face Max Implant Course</div>
+      <div className="text-xs rounded-full bg-slate-900 text-white px-2 py-0.5">
+        Most Popular
+      </div>
+    </div>
+
+    <div className="mt-4 flex items-end gap-2">
+      <IndianRupee className="w-5 h-5" />
+      <div className="text-5xl font-extrabold tracking-tight">24,999</div>
+      <div className="text-slate-500 mb-1 text-sm">one-time</div>
+    </div>
+
+    <ul className="mt-4 space-y-2 text-sm text-slate-700">
+      <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Lifetime access to all modules</li>
+      <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Step-by-step surgical & prosthetic walkthroughs</li>
+      <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Priority answers to your clinical queries</li>
+      <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Direct access to course mentors</li>
+    </ul>
+
+    <a
+      href="#checkout"
+      className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 text-white px-4 py-3 font-semibold hover:bg-slate-800 transition"
+    >
+      Add to Cart
+    </a>
+
+    <p className="mt-2 text-xs text-slate-500">
+      Includes certificate • Lifetime updates • 50% off on all future courses
+    </p>
+  </div>
+</div>
         </div>
       </section>
 
@@ -478,21 +485,21 @@ export default function Page() {
                 delay={i * 0.1}
                 className="rounded-2xl border p-6 bg-white shadow-sm transition transform hover:-translate-y-1 hover:shadow-lg"
               >
-                {/* Stars */}
-                <div
-                  className="flex items-center gap-1 mb-3 justify-start text-yellow-400"
-                  aria-label={`${t.stars} out of 5 stars`}
-                >
-                  {[...Array(t.stars)].map((_, s) => (
-                    <Star key={s} className="w-4 h-4" fill="currentColor" />
-                  ))}
-                  {[...Array(5 - t.stars)].map((_, s) => (
-                    <Star key={`o-${s}`} className="w-4 h-4 text-slate-300" />
-                  ))}
-                </div>
+               {/* Stars (fixed height row) */}
+<div className="flex items-center gap-1 mb-3 text-amber-400 min-h-[20px]" aria-label={`${t.stars} out of 5 stars`}>
+  {[...Array(t.stars)].map((_, s) => (
+    <Star key={s} className="w-4 h-4" fill="currentColor" />
+  ))}
+  {[...Array(5 - t.stars)].map((_, s) => (
+    <Star key={`o-${s}`} className="w-4 h-4 text-slate-300" />
+  ))}
+</div>
 
-                {/* Quote */}
-                <p className="italic">“{t.text}”</p>
+{/* Quote with opening quote mark */}
+<p className="italic text-slate-800 before:content-['“'] after:content-['”']">
+  {t.text}
+</p>
+
 
                 {/* Name */}
                 <div className="mt-4 font-semibold">{t.name}</div>
@@ -511,7 +518,10 @@ export default function Page() {
               <MotionReveal
                 key={idx}
                 delay={idx * 0.05}
-                className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm hover:shadow-md transition"
+                className=className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm hover:shadow-md transition relative
+           before:absolute before:inset-y-0 before:left-0 before:w-1 before:rounded-l-2xl
+           before:bg-gradient-to-b before:from-amber-400 before:to-slate-900/70"
+
               >
                 <div className="text-xs uppercase tracking-wide text-slate-500">
                   {m.week}
