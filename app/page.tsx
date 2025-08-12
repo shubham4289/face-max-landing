@@ -101,9 +101,9 @@ const modules = [
     week: "Module 1",
     title: "Foundations of Implantology",
     bullets: [
-      "What implants are & when they’re indicated",
+      "What exactly implants are & when they’re indicated",
       "Science behind predictable, lasting results",
-      "Indications vs contraindications",
+      "Go or No-Go: Clinical Decision Matrix",
     ],
   },
   {
@@ -119,7 +119,7 @@ const modules = [
     week: "Module 3",
     title: "Armamentarium & Implant Systems",
     bullets: [
-      "Complete surgical kit walkthrough",
+      "Every Instrument, Every Purpose — Unpacked",
       "Understanding mini vs standard implant systems",
       "Choosing the right implant design for the case",
     ],
@@ -128,7 +128,7 @@ const modules = [
     week: "Module 4",
     title: "Treatment Planning & Case Selection Mastery",
     bullets: [
-      "Medical & dental history evaluation",
+      "Critical Medical & dental history that really matter",
       "CBCT interpretation & site mapping",
       "Risk assessment & site suitability protocols",
     ],
@@ -149,6 +149,7 @@ const modules = [
       "Evidence-based patient aftercare",
       "Pain, swelling, & inflammation control",
       "Proactive complication prevention strategies",
+      "From Crisis to Confidence — Full-Scope Complication Protocols",
     ],
   },
   {
@@ -166,11 +167,11 @@ const faqs = [
   {
     q: "Who is this course for?",
     a:
-      "General dentists and oral surgeons who want a structured, clinically-useful path from diagnosis to restoration.",
+      "For those starting from scratch, upgrading their skills, or tired of half-explained tutorials that leave more questions than answers.",
   },
   {
     q: "How long do I get access?",
-    a: "Lifetime. Rewatch modules, download updates, and access new case uploads.",
+    a: "Forever yours — rewatch every lesson, gain instant access to future updates, and learn from newly added clinical cases.",
   },
   {
     q: "Will I get a certificate?",
@@ -178,9 +179,9 @@ const faqs = [
       "Yes—digital verifiable certificate on completion of quizzes and final case submission.",
   },
   {
-    q: "Is there mentorship?",
+    q: "Will I get extra discount on new courses?",
     a:
-      "Pro plan includes 3 live case discussions and WhatsApp group support for 6 months.",
+      "Yes — as a valued member, you’ll enjoy up to 50% off on all future courses.",
   },
 ];
 
