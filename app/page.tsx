@@ -13,6 +13,7 @@ import {
 import "./globals.css";
 import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
+import DealCountdown from "./components/DealCountdown";
 
 /* ===== Clean, balanced icons (keep wrapper the same) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
@@ -238,6 +239,12 @@ export default function Page() {
           </nav>
         </div>
       </header>
+      {/* Limited-time deal countdown bar */}
+<DealCountdown minutes={10} anchorId="#pricing" />
+
+{/* Spacer so the bar doesn’t cover the hero (matches header + bar height) */}
+<div aria-hidden className="h-16 md:h-20"></div>
+
 
      {/* Hero */}
 <section className="relative overflow-hidden">
