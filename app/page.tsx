@@ -15,7 +15,7 @@ import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 import DealCountdown from "./components/DealCountdown";
 
-/* ===== Clean, balanced icons (keep wrapper the same) ===== */
+/* ===== Clean, balanced icons (kept for future use if needed) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
@@ -26,11 +26,8 @@ const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* head */}
     <rect x="7" y="3" width="10" height="4" rx="2" />
-    {/* body taper */}
     <path d="M9 7h6c0 5.5-2 8.5-3 13-.3 1.2-1.7 1.2-2 0-1-4.5-3-7.5-3-13h2z" />
-    {/* threads */}
     <path d="M9 10h6M8.8 12h6.4M8.6 14h6.8M8.4 16h7.2" />
   </svg>
 );
@@ -45,11 +42,8 @@ const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* handle */}
     <path d="M3.5 17.5 L12 9" />
-    {/* blade (simple wedge) */}
     <path d="M13 9.5 L21 17 L18 20 L10 12" />
-    {/* cutting edge support */}
     <path d="M7 21h9l5-5" />
   </svg>
 );
@@ -64,30 +58,55 @@ const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* tooth outline */}
     <path d="M8.5 4.2c2-1.4 5-1.4 7 0 1.9 1.4 2.1 4.2.6 5.9-.9 1-1.4 2.6-1.8 4-.3 1-1.7 1-2 0-.4-1.4-.9-3-1.8-4C6.9 8.4 6.6 5.6 8.5 4.2Z" />
-    {/* small alert triangle at upper-left */}
     <path d="M3.2 10.4l2-3.5c.2-.3.6-.3.8 0l2 3.5c.2.3 0 .7-.4.7H3.6c-.4 0-.6-.4-.4-.7Z" />
     <path d="M5.2 8.8v1.1M5.2 11.2h0" />
   </svg>
 );
 
-
+/* ===== Feature cards content (PNG icons with explicit dimensions) ===== */
 const features = [
   {
-    icon: <img src="/icons/implant.png" alt="Dental implant icon" className="w-7 h-7" />,
+    icon: (
+      <img
+        src="/icons/implant.png"
+        alt="Dental implant icon"
+        width={28}
+        height={28}
+        className="w-7 h-7"
+      />
+    ),
     title: "Every Clinical Scenario Covered",
-    text: "From single implant tooth to multiple implants teeth — master protocols for every type of case you’ll encounter in real practice.",
+    text:
+      "From single-tooth to full-arch — master protocols for every case you’ll meet in real practice.",
   },
   {
-    icon: <img src="/icons/scalpel.png" alt="Scalpel icon" className="w-7 h-7" />,
+    icon: (
+      <img
+        src="/icons/scalpel.png"
+        alt="Scalpel icon"
+        width={28}
+        height={28}
+        className="w-7 h-7"
+      />
+    ),
     title: "Step-by-Step Surgical Clarity",
-    text: "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
+    text:
+      "Crystal-clear instructions for every surgical stage, so you work with precision and confidence.",
   },
   {
-    icon: <img src="/icons/alert-tooth.png" alt="Alert tooth icon" className="w-7 h-7" />,
+    icon: (
+      <img
+        src="/icons/alert-tooth.png"
+        alt="Alert tooth icon"
+        width={28}
+        height={28}
+        className="w-7 h-7"
+      />
+    ),
     title: "Complication Management Mastery",
-    text: "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
+    text:
+      "Detailed protocols for handling every possible implant complication — turning uncertainty into confidence.",
   },
   {
     icon: <Shield className="w-6 h-6" aria-hidden />,
@@ -95,7 +114,6 @@ const features = [
     text: "Every protocol mapped to literature and real-world decision trees.",
   },
 ];
-
 
 const modules = [
   {
@@ -129,7 +147,7 @@ const modules = [
     week: "Module 4",
     title: "Treatment Planning & Case Selection Mastery",
     bullets: [
-      "Critical Medical & dental history that really matter",
+      "Critical medical & dental history that really matters",
       "CBCT interpretation & site mapping",
       "Risk assessment & site suitability protocols",
     ],
@@ -206,7 +224,6 @@ const testimonials = [
   },
 ];
 
-
 export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
@@ -219,7 +236,7 @@ export default function Page() {
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#what" className="hover:opacity-80">
-              What we do?
+              What we do
             </a>
             <a href="#curriculum" className="hover:opacity-80">
               Curriculum
@@ -239,115 +256,113 @@ export default function Page() {
           </nav>
         </div>
       </header>
+
       {/* Limited-time deal countdown bar */}
-<DealCountdown minutes={10} anchorId="#pricing" />
+      <DealCountdown minutes={10} anchorId="#pricing" />
 
-{/* Spacer so the bar doesn’t cover the hero (matches header + bar height) */}
-<div aria-hidden className="h-16 md:h-20"></div>
+      {/* Spacer so the bar doesn’t cover the hero (matches header + bar height) */}
+      <div aria-hidden className="h-16 md:h-20"></div>
 
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 flex flex-col items-center text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full max-w-3xl"
+          >
+            {/* Headline */}
+            <h1 className="headline text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight text-slate-900">
+              The Ultimate Implant Course
+            </h1>
 
-     {/* Hero */}
-<section className="relative overflow-hidden">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 flex flex-col items-center text-center">
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="w-full max-w-3xl"
-    >
-     {/* Headline */}
-<h1 className="headline text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight text-slate-900">
-  The Ultimate Implant Course
-</h1>
+            {/* Description */}
+            <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+              Expert-built. Proven. Precise. Full-depth. Step-by-step. Clinic-ready.
+            </p>
 
-{/* Description */}
-<p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
-  Expert-built. Proven. Precise. Full-depth. Step-by-step. Clinic-ready.
-</p>
+            {/* Buttons */}
+            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                id="enroll"
+                href="#pricing"
+                className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 bg-slate-900 text-white font-semibold shadow-sm hover:shadow-md hover:bg-slate-800 transition"
+              >
+                Enroll Now
+              </a>
+              <a
+                href="#preview"
+                className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 border border-slate-300/80 bg-white hover:bg-slate-50 font-semibold"
+              >
+                Watch Preview
+              </a>
+            </div>
 
-{/* Buttons */}
-<div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
-  <a
-    id="enroll"
-    href="#pricing"
-    className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 bg-slate-900 text-white font-semibold shadow-sm hover:shadow-md hover:bg-slate-800 transition"
-  >
-    Enroll Now
-  </a>
-  <a
-    href="#preview"
-    className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 border border-slate-300/80 bg-white hover:bg-slate-50 font-semibold"
-  >
-    Watch Preview
-  </a>
-</div>
+            {/* Course Info Badges */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base font-semibold text-slate-900 tracking-tight">
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5" aria-hidden />
+                <span>Certificate on completion</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" aria-hidden />
+                <span>Lifetime access</span>
+              </div>
+            </div>
 
+            {/* Trusted By */}
+            <div className="mt-3 flex items-center justify-center gap-2 text-base font-semibold text-slate-900 tracking-tight">
+              <CheckCircle2 className="w-5 h-5" aria-hidden />
+              <span>
+                Trusted by over <span className="font-extrabold">1,000+</span> dentists worldwide.
+              </span>
+            </div>
 
- {/* Course Info Badges */}
-<div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base font-semibold text-slate-900">
-  <div className="flex items-center gap-2">
-    <Shield className="w-5 h-5" aria-hidden />
-    <span>Certificate on completion</span>
-  </div>
-  <div className="flex items-center gap-2">
-    <Clock className="w-5 h-5" aria-hidden />
-    <span>Lifetime access</span>
-  </div>
-</div>
+            {/* Bonus Line */}
+            <div className="mt-4 text-lg font-bold text-slate-900 text-center">
+              After you complete the course, our team of surgeons will personally guide you through your first
+              <span className="mx-1 text-3xl font-extrabold tracking-tight">100</span> implant cases.
+            </div>
 
-{/* Trusted By */}
-<div className="mt-3 flex items-center justify-center gap-2 text-base font-semibold text-slate-900">
-  <CheckCircle2 className="w-5 h-5" aria-hidden />
-  <span>Trusted by over <span className="font-extrabold">1,000+</span> dentists worldwide.</span>
-</div>
+            {/* Course Trailer */}
+            <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
+              <button className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2">
+                <Video className="w-5 h-5" /> Course Trailer
+              </button>
+            </div>
+            <p id="preview" className="sr-only">
+              Preview video placeholder
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-{/* Bonus Line */}
-<div className="mt-4 text-lg font-bold text-slate-900 text-center">
-  After you complete the course, our team of surgeons will personally guide you through your first
-  <span className="mx-1 text-3xl font-extrabold tracking-tight">100</span> implant cases.
-</div>
-
-
-
-      {/* Course Trailer */}
-      <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
-        <button className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2">
-          <Video className="w-5 h-5" /> Course Trailer
-        </button>
-      </div>
-      <p id="preview" className="sr-only">Preview video placeholder</p>
-    </motion.div>
-  </div>
-</section>
-
-<ImplantHero />
+      <ImplantHero />
 
       {/* What we do */}
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <MotionReveal y={12} delay={0.05}>
-  <h2 className="text-[40px] md:text-[44px] lg:text-[48px] leading-tight font-bold text-center">
-  From confusion to complete confidence
-</h2>
-
-</MotionReveal>
-
-
+            <h2 className="text-[40px] md:text-[44px] lg:text-[48px] leading-tight font-bold text-center">
+              From confusion to complete confidence
+            </h2>
+          </MotionReveal>
 
           <div className="mt-10 grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl border p-6">
-              <h3 className="font-semibold">Signature Implantology books </h3>
+            <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
+              <h3 className="font-semibold">Signature Implantology Books</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Includes Members-Only 2 Signature Implant Books by Face Max Academy.
+                Includes two members-only signature implant books by Face Max Academy.
               </p>
             </div>
-            <div className="rounded-2xl border p-6">
+            <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
               <h3 className="font-semibold">Complete Implant Training</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Implant Surgery to prosthetic, everything step-by-step from beginner to advanced level.
+                Implant surgery to prosthetic—everything step-by-step, from beginner to advanced.
               </p>
             </div>
-            <div className="rounded-2xl border p-6">
+            <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
               <h3 className="font-semibold">Community</h3>
               <p className="mt-2 text-sm text-slate-600">
                 Judgement-free Telegram group for case discussions & quick help.
@@ -357,21 +372,31 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16" id="features">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Features — with a super subtle background accent */}
+      <section
+        className="py-16 relative"
+        id="features"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.5]"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(600px 300px at 50% 0%, rgba(203,213,225,0.25), transparent 60%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center">Why this course</h2>
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (
               <MotionReveal
                 key={i}
                 delay={i * 0.05}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition"
               >
-               <div className="w-12 h-12 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
-                 {f.icon}
-               </div>
-
+                <div className="w-12 h-12 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
+                  {f.icon}
+                </div>
                 <h3 className="mt-4 font-semibold">{f.title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{f.text}</p>
               </MotionReveal>
@@ -380,14 +405,14 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Featured Course */}
+      {/* Featured Course — premium hover glow on the price card */}
       <section id="featured" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div>
               <h2 className="text-3xl font-bold">The Ultimate Implant Course — Face Max Signature</h2>
               <p className="mt-3 text-slate-700">
-                From diagnosis to Implant crown — a complete, Implant literature-backed pathway for dentists worldwide, from beginner to expert, combining Face Max’s signature hands-on clarity with proven real-world protocols
+                From diagnosis to implant crown—an evidence-backed pathway for dentists worldwide, from beginner to expert, combining Face Max’s hands-on clarity with proven real-world protocols.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-slate-700">
                 {[
@@ -403,7 +428,8 @@ export default function Page() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border-2 border-slate-900 p-7 shadow-sm">
+
+            <div className="group rounded-2xl border-2 border-slate-900 p-7 shadow-sm transition hover:shadow-lg hover:border-amber-400/70 hover:ring-2 hover:ring-amber-300/30">
               <div className="flex items-center justify-between">
                 <div className="text-xl font-semibold">Face Max Implant Course</div>
                 <div className="text-xs rounded-full bg-slate-900 text-white px-2 py-0.5">
@@ -431,7 +457,7 @@ export default function Page() {
               </ul>
               <a
                 href="#checkout"
-                className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 text-white px-4 py-3 font-semibold"
+                className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 text-white px-4 py-3 font-semibold group-hover:bg-slate-800 transition"
               >
                 Add to Cart
               </a>
@@ -441,39 +467,40 @@ export default function Page() {
         </div>
       </section>
 
-     {/* Testimonials */}
-<section className="py-16">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <h2 className="text-3xl font-bold text-center">What doctors say</h2>
-    <div className="mt-10 grid md:grid-cols-3 gap-6">
-      {testimonials.map((t, i) => (
-        <MotionReveal
-          key={i}
-          delay={i * 0.1}
-          className="rounded-2xl border p-6 bg-white shadow-sm transition transform hover:-translate-y-1 hover:shadow-lg"
-        >
-          {/* Stars */}
-          <div className="flex items-center gap-1 mb-3 justify-start text-yellow-400" aria-label={`${t.stars} out of 5 stars`}>
-            {[...Array(t.stars)].map((_, s) => (
-              <Star key={s} className="w-4 h-4" fill="currentColor" />
-            ))}
-            {/* (Optional) show faint empty stars for visual balance */}
-            {[...Array(5 - t.stars)].map((_, s) => (
-              <Star key={`o-${s}`} className="w-4 h-4 text-slate-300" />
+      {/* Testimonials */}
+      <section className="py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center">What doctors say</h2>
+          <div className="mt-10 grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <MotionReveal
+                key={i}
+                delay={i * 0.1}
+                className="rounded-2xl border p-6 bg-white shadow-sm transition transform hover:-translate-y-1 hover:shadow-lg"
+              >
+                {/* Stars */}
+                <div
+                  className="flex items-center gap-1 mb-3 justify-start text-yellow-400"
+                  aria-label={`${t.stars} out of 5 stars`}
+                >
+                  {[...Array(t.stars)].map((_, s) => (
+                    <Star key={s} className="w-4 h-4" fill="currentColor" />
+                  ))}
+                  {[...Array(5 - t.stars)].map((_, s) => (
+                    <Star key={`o-${s}`} className="w-4 h-4 text-slate-300" />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p className="italic">“{t.text}”</p>
+
+                {/* Name */}
+                <div className="mt-4 font-semibold">{t.name}</div>
+              </MotionReveal>
             ))}
           </div>
-
-          {/* Quote */}
-          <p className="italic">“{t.text}”</p>
-
-          {/* Name */}
-          <div className="mt-4 font-semibold">{t.name}</div>
-        </MotionReveal>
-      ))}
-    </div>
-  </div>
-</section>
-
+        </div>
+      </section>
 
       {/* Curriculum */}
       <section id="curriculum" className="py-16 bg-white">
@@ -484,7 +511,7 @@ export default function Page() {
               <MotionReveal
                 key={idx}
                 delay={idx * 0.05}
-                className="rounded-2xl border border-slate-200 p-6"
+                className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm hover:shadow-md transition"
               >
                 <div className="text-xs uppercase tracking-wide text-slate-500">
                   {m.week}
@@ -504,7 +531,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* FAQ + Guarantee */}
+      {/* FAQ + Urgency block */}
       <section id="faq" className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
@@ -519,40 +546,39 @@ export default function Page() {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl border p-6 bg-white">
-  <h3 className="font-semibold flex items-center gap-2">
-    <CheckCircle2 className="w-5 h-5 text-green-600" />
-    One Chance to Level Up — Forever
-  </h3>
 
-  <ul className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700">
-    <li className="flex items-start gap-3">
-      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
-      <span>Miss this and you’ll spend years piecing together half-baked tutorials, wasting cases, and second-guessing your skills.</span>
-    </li>
-    <li className="flex items-start gap-3">
-      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
-      <span>In just weeks, we hand you the exact frameworks, case protocols, and decision trees that took us a decade to master.</span>
-    </li>
-    <li className="flex items-start gap-3">
-      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
-      <span>Every day you wait, another patient chooses someone else.</span>
-    </li>
-    <li className="flex items-start gap-3">
-      <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
-      <span>Seats are limited, and once this cohort closes — it’s gone.</span>
-    </li>
-  </ul>
+            <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
+              <h3 className="font-semibold flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                One Chance to Level Up — Forever
+              </h3>
 
-  <a
-    href="#pricing"
-    className="mt-4 inline-flex items-center gap-2 text-slate-900 font-semibold"
-  >
-    See pricing <ArrowRight className="w-4 h-4" />
-  </a>
-</div>
+              <ul className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700">
+                <li className="flex items-start gap-3">
+                  <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+                  <span>Miss this and you’ll spend years piecing together half-baked tutorials, wasting cases, and second-guessing your skills.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+                  <span>In just weeks, we hand you the exact frameworks, case protocols, and decision trees that took us a decade to master.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+                  <span>Every day you wait, another patient chooses someone else.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Star className="w-4 h-4 flex-none mt-1 text-amber-500" strokeWidth={0} fill="currentColor" />
+                  <span>Seats are limited, and once this cohort closes — it’s gone.</span>
+                </li>
+              </ul>
 
-
+              <a
+                href="#pricing"
+                className="mt-4 inline-flex items-center gap-2 text-slate-900 font-semibold"
+              >
+                See pricing <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -562,47 +588,45 @@ export default function Page() {
         <div>
           <div className="text-sm font-semibold">Ready to start placing implants?</div>
           <div className="text-xs text-slate-600">
-            Lifetime access • Certificate • Downloads
+            Lifetime access • Certificate • Updates
           </div>
         </div>
         <a
           href="#checkout"
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-semibold"
+          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-semibold hover:bg-slate-800 transition"
         >
           Enroll
         </a>
       </div>
 
-  {/* Footer */}
-<footer className="py-10 border-t bg-white">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-8">
-    {/* Column 1 — Contact (moved here) */}
-    <div id="contact">
-      <div className="font-semibold">Contact</div>
-      <div className="mt-2 text-sm">Email: admin@thefacemax.com</div>
-      {/* If you also show email elsewhere, you can add it here too */}
-      {/* <div className="mt-1 text-sm">Email: admin@thefacemax.com</div> */}
-    </div>
+      {/* Footer */}
+      <footer className="py-10 border-t bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-8 md:gap-10">
+          {/* Column 1 — Contact (moved here) */}
+          <div id="contact">
+            <div className="font-semibold">Contact</div>
+            <div className="mt-2 text-sm">Email: admin@thefacemax.com</div>
+          </div>
 
-    {/* Column 2 — Quick Links (unchanged) */}
-    <div>
-      <div className="font-semibold">Quick Links</div>
-      <ul className="mt-2 space-y-1">
-        <li><a href="#what">What we do</a></li>
-        <li><a href="#featured">Featured course</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-      </ul>
-    </div>
+          {/* Column 2 — Quick Links (unchanged) */}
+          <div>
+            <div className="font-semibold">Quick Links</div>
+            <ul className="mt-2 space-y-1">
+              <li><a href="#what">What we do</a></li>
+              <li><a href="#featured">Featured course</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+            </ul>
+          </div>
 
-    {/* Column 3 — Face Max Academy + © (moved here) */}
-    <div>
-      <div className="font-semibold">Face Max Academy</div>
-      <div className="mt-2">
-        © {new Date().getFullYear()} Face Max Academy. All rights reserved.
-      </div>
-    </div>
-  </div>
-</footer>
+          {/* Column 3 — Face Max Academy + © (moved here) */}
+          <div>
+            <div className="font-semibold">Face Max Academy</div>
+            <div className="mt-2">
+              © {new Date().getFullYear()} Face Max Academy. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
