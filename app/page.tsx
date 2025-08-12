@@ -565,35 +565,36 @@ export default function Page() {
         </a>
       </div>
 
-      {/* Footer */}
-      <footer className="py-10 border-t bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-6">
-          <div>
-            <div className="font-semibold">Face Max Academy</div>
-            <div className="mt-2">
-              © {new Date().getFullYear()} Face Max Academy. All rights reserved.
-            </div>
-          </div>
-          <div>
-            <div className="font-semibold">Quick Links</div>
-            <ul className="mt-2 space-y-1">
-              <li>
-                <a href="#what">What we do?</a>
-              </li>
-              <li>
-                <a href="#featured">Featured Courses</a>
-              </li>
-              <li>
-                <a href="#pricing">Pricing & Discounts</a>
-              </li>
-            </ul>
-          </div>
-          <div id="contact">
-            <div className="font-semibold">Contact</div>
-            <div className="mt-2 text-sm">Email: admin@thefacemax.com</div>
-          </div>
-        </div>
-      </footer>
+  {/* Footer */}
+<footer className="py-10 border-t bg-white">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-6">
+    {/* Column 1 — Contact (moved here) */}
+    <div id="contact">
+      <div className="font-semibold">Contact</div>
+      <div className="mt-2 text-sm">Email: admin@thefacemax.com</div>
+      {/* If you also show email elsewhere, you can add it here too */}
+      {/* <div className="mt-1 text-sm">Email: admin@thefacemax.com</div> */}
+    </div>
+
+    {/* Column 2 — Quick Links (unchanged) */}
+    <div>
+      <div className="font-semibold">Quick Links</div>
+      <ul className="mt-2 space-y-1">
+        <li><a href="#what">What we do</a></li>
+        <li><a href="#featured">Featured course</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+
+    {/* Column 3 — Face Max Academy + © (moved here) */}
+    <div>
+      <div className="font-semibold">Face Max Academy</div>
+      <div className="mt-2">
+        © {new Date().getFullYear()} Face Max Academy. All rights reserved.
+      </div>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }
