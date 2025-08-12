@@ -248,35 +248,36 @@ export default function Page() {
       transition={{ duration: 0.6 }}
       className="w-full max-w-3xl"
     >
-      {/* Headline */}
-      <h1 className="headline text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] text-slate-900">
-        The Ultimate Implant Course
-      </h1>
+     {/* Headline */}
+<h1 className="headline text-6xl lg:text-7xl font-extrabold leading-[1.02] tracking-tight text-slate-900">
+  The Ultimate Implant Course
+</h1>
 
-      {/* Description */}
-      <p className="mt-4 text-lg text-slate-600">
-        Expert-Built • Proven • Precise • Full-Depth • Step-by-Step • Clinic-Ready
-      </p>
+{/* Description */}
+<p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+  Expert-built. Proven. Precise. Full-depth. Step-by-step. Clinic-ready.
+</p>
 
-      {/* Buttons */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <a
-          id="enroll"
-          href="#pricing"
-          className="inline-flex items-center justify-center rounded-2xl px-6 py-3 bg-slate-900 text-white font-semibold"
-        >
-          Enroll Now
-        </a>
-        <a
-          href="#preview"
-          className="inline-flex items-center justify-center rounded-2xl px-6 py-3 border border-slate-300 font-semibold"
-        >
-          Watch Preview
-        </a>
-      </div>
+{/* Buttons */}
+<div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+  <a
+    id="enroll"
+    href="#pricing"
+    className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 bg-slate-900 text-white font-semibold shadow-sm hover:shadow-md hover:bg-slate-800 transition"
+  >
+    Enroll Now
+  </a>
+  <a
+    href="#preview"
+    className="inline-flex items-center justify-center rounded-2xl px-7 py-3.5 border border-slate-300/80 bg-white hover:bg-slate-50 font-semibold"
+  >
+    Watch Preview
+  </a>
+</div>
 
-     {/* Course Info Badges */}
-<div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-base md:text-lg font-bold font-headline text-slate-900">
+
+ {/* Course Info Badges */}
+<div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base font-semibold text-slate-900">
   <div className="flex items-center gap-2">
     <Shield className="w-5 h-5" aria-hidden />
     <span>Certificate on completion</span>
@@ -288,16 +289,17 @@ export default function Page() {
 </div>
 
 {/* Trusted By */}
-<div className="mt-4 flex items-center justify-center gap-2 text-base md:text-lg font-bold font-headline text-slate-900">
+<div className="mt-3 flex items-center justify-center gap-2 text-base font-semibold text-slate-900">
   <CheckCircle2 className="w-5 h-5" aria-hidden />
   <span>Trusted by over <span className="font-extrabold">1,000+</span> dentists worldwide.</span>
 </div>
 
 {/* Bonus Line */}
-<div className="mt-4 text-lg md:text-xl font-bold font-headline text-slate-900 text-center">
+<div className="mt-4 text-lg font-bold text-slate-900 text-center">
   After you complete the course, our team of surgeons will personally guide you through your first
-  <span className="text-2xl md:text-3xl font-extrabold"> 100 implant cases</span>.
+  <span className="mx-1 text-3xl font-extrabold tracking-tight">100</span> implant cases.
 </div>
+
 
 
       {/* Course Trailer */}
@@ -317,12 +319,10 @@ export default function Page() {
       <section id="what" className="py-16 border-y border-slate-200/70 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <MotionReveal y={12} delay={0.05}>
-  <h2 className="text-3xl md:text-4xl font-bold text-center">
-    <span className="font-bold">From</span>{' '}
-    <span className="text-lg font-normal">confusion to</span>{' '}
-    <span className="font-bold">complete</span>{' '}
-    <span className="font-bold">confidence</span>
-  </h2>
+  <h2 className="text-[40px] md:text-[44px] lg:text-[48px] leading-tight font-bold text-center">
+  From confusion to complete confidence
+</h2>
+
 </MotionReveal>
 
 
@@ -361,9 +361,10 @@ export default function Page() {
                 delay={i * 0.05}
                 className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
               >
-                <div className="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
-                  {f.icon}
-                </div>
+               <div className="w-12 h-12 rounded-xl bg-slate-100 grid place-items-center text-slate-900">
+                 {f.icon}
+               </div>
+
                 <h3 className="mt-4 font-semibold">{f.title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{f.text}</p>
               </MotionReveal>
@@ -395,17 +396,17 @@ export default function Page() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border-2 border-slate-900 p-6 shadow-sm">
+            <div className="rounded-2xl border-2 border-slate-900 p-7 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="text-xl font-semibold">Face Max Implant Course</div>
                 <div className="text-xs rounded-full bg-slate-900 text-white px-2 py-0.5">
                   Most Popular
                 </div>
               </div>
-              <div className="mt-3 flex items-end gap-2">
+              <div className="mt-4 flex items-end gap-2">
                 <IndianRupee className="w-5 h-5" />
-                <div className="text-4xl font-extrabold">24,999</div>
-                <div className="text-slate-500 mb-2 text-sm">one-time</div>
+                <div className="text-5xl font-extrabold tracking-tight">24,999</div>
+                <div className="text-slate-500 mb-1 text-sm">one-time</div>
               </div>
               <ul className="mt-4 space-y-2 text-sm text-slate-700">
                 <li className="flex gap-2 items-start">
@@ -567,7 +568,7 @@ export default function Page() {
 
   {/* Footer */}
 <footer className="py-10 border-t bg-white">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-6">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-slate-600 grid md:grid-cols-3 gap-8">
     {/* Column 1 — Contact (moved here) */}
     <div id="contact">
       <div className="font-semibold">Contact</div>
