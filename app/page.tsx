@@ -16,6 +16,7 @@ import ImplantHero from "./components/ImplantHero";
 import DealCountdown from "./components/DealCountdown";
 import TrailerModal from "./components/TrailerModal";
 import { useState } from "react";
+import GeoPrice from "./components/GeoPrice";
 
 
 /* ===== Clean, balanced icons (kept for future use if needed) ===== */
@@ -170,86 +171,9 @@ const testimonials = [
     stars: 5,
   },
 ];
-// ---- Dynamic price (base is INR 24,999) ----
-const BASE_PRICE_INR = 24999;
-
-// Just a small symbol map for nice display (Intl will format currency too)
-const CURRENCY_SYMBOL: Record<string, string> = {
-  INR: "₹",
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  AUD: "A$",
-  CAD: "C$",
-  SGD: "S$",
-  AED: "د.إ",
-  JPY: "¥",
-};
-
-export default function Page() {   // Local price state shown in the Pricing card
-  const [displayPrice, setDisplayPrice] = React.useState<{
-    code: string;
-    symbol: string;
-    formatted: string; // a nice, ready-to-show number like 299 or 24,999
-  }>({
-    code: "INR",
-    symbol: "₹",
-    formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
-  });
-
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    (async () => {
-      try {
-        // 1) Ask our server for visitor's currency (via Abstract)
-        const geo = await fetch("/api/geo").then((r) => r.json());
-        const code = (geo?.currency?.code || "INR").toUpperCase();
-
-        // 2) If not INR, convert the base price on the server
-        if (code !== "INR") {
-          const conv = await fetch(
-            `/api/convert?from=INR&to=${encodeURIComponent(code)}&amount=${BASE_PRICE_INR}`
-          ).then((r) => r.json());
-
-          if (!isCancelled && conv?.value) {
-            const formatted = new Intl.NumberFormat(undefined, {
-              style: "currency",
-              currency: code,
-              maximumFractionDigits: 0,
-            }).format(conv.value);
-
-            // We store the number part and show the symbol separately for layout control
-            const symbol = CURRENCY_SYMBOL[code] || code;
-            const numberOnly = formatted.replace(/[^\d.,]/g, "").trim();
-
-            setDisplayPrice({
-              code,
-              symbol,
-              formatted: numberOnly,
-            });
-            return;
-          }
-        }
-
-        // Fallback to INR if anything fails
-        if (!isCancelled) {
-          setDisplayPrice({
-            code: "INR",
-            symbol: "₹",
-            formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
-          });
-        }
-      } catch {
-        if (!isCancelled) {
-          setDisplayPrice({
-            code: "INR",
-            symbol: "₹",
-            formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
-          });
-        }
-      }
-    })();
+<div className="mt-4">
+  <GeoPrice baseInr={24999} subLabel="one-time" />
+</div>
 
     return () => {
       isCancelled = true;
