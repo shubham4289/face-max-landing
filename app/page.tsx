@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Shield,
@@ -7,7 +7,6 @@ import {
   Video,
   Star,
   ArrowRight,
-  IndianRupee,
   Clock,
 } from "lucide-react";
 import "./globals.css";
@@ -15,9 +14,7 @@ import MotionReveal from "./components/MotionReveal";
 import ImplantHero from "./components/ImplantHero";
 import DealCountdown from "./components/DealCountdown";
 import TrailerModal from "./components/TrailerModal";
-import { useState } from "react";
 import GeoPrice from "./components/GeoPrice";
-
 
 /* ===== Clean, balanced icons (kept for future use if needed) ===== */
 const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
@@ -171,17 +168,10 @@ const testimonials = [
     stars: 5,
   },
 ];
-<div className="mt-4">
-  <GeoPrice baseInr={24999} subLabel="one-time" />
-</div>
 
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
+export default function Page() {
+  const [trailerOpen, setTrailerOpen] = useState(false);
 
-    const [trailerOpen, setTrailerOpen] = useState(false);
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
       {/* Header */}
@@ -258,26 +248,25 @@ const testimonials = [
               <span className="mx-1 text-3xl font-extrabold tracking-tight">100</span> implant cases.
             </div>
 
-           {/* Course Trailer */}
-<div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
-  <button
-    type="button"
-    onClick={() => setTrailerOpen(true)}
-    className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2 hover:bg-white"
-  >
-    <Video className="w-5 h-5" /> Course Trailer
-  </button>
-</div>
+            {/* Course Trailer */}
+            <div className="mt-8 aspect-video rounded-2xl bg-slate-200 shadow-inner grid place-items-center">
+              <button
+                type="button"
+                onClick={() => setTrailerOpen(true)}
+                className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white/80 px-4 py-2 hover:bg-white"
+              >
+                <Video className="w-5 h-5" /> Course Trailer
+              </button>
+            </div>
 
-{/* Modal lives outside the button so it can overlay the page */}
-<TrailerModal
-  open={trailerOpen}
-  onClose={() => setTrailerOpen(false)}
-  youtubeId="YOUR_YOUTUBE_ID_HERE" // e.g., "dQw4w9WgXcQ"
-/>
+            {/* Trailer Modal */}
+            <TrailerModal
+              open={trailerOpen}
+              onClose={() => setTrailerOpen(false)}
+              youtubeId="YOUR_YOUTUBE_ID_HERE"
+            />
 
-<p id="preview" className="sr-only">Preview video placeholder</p>
-
+            <p id="preview" className="sr-only">Preview video placeholder</p>
           </motion.div>
         </div>
       </section>
@@ -310,7 +299,7 @@ const testimonials = [
         </div>
       </section>
 
-      {/* Features — with a super subtle background accent */}
+      {/* Features — subtle background accent */}
       <section className="py-16 relative" id="features">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.5]"
@@ -337,7 +326,7 @@ const testimonials = [
         </div>
       </section>
 
-      {/* Featured Course — premium hover glow on the price card */}
+      {/* Featured Course / Pricing */}
       <section id="pricing" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -368,12 +357,10 @@ const testimonials = [
                   <div className="text-xs rounded-full bg-slate-900 text-white px-2 py-0.5">Most Popular</div>
                 </div>
 
-                <div className="mt-4 flex items-end gap-2">
-  <div className="text-2xl font-semibold">{displayPrice.symbol}</div>
-  <div className="text-5xl font-extrabold tracking-tight">{displayPrice.formatted}</div>
-  <div className="text-slate-500 mb-1 text-sm">{displayPrice.code}</div>
-</div>
-
+                {/* Geo-aware price */}
+                <div className="mt-4">
+                  <GeoPrice baseInr={24999} subLabel="one-time" />
+                </div>
 
                 <ul className="mt-4 space-y-2 text-sm text-slate-700">
                   <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Lifetime access to all modules</li>
@@ -406,7 +393,7 @@ const testimonials = [
                   {[...Array(5 - t.stars)].map((_, s) => (<Star key={`o-${s}`} className="w-4 h-4 text-slate-300" />))}
                 </div>
 
-                {/* Quote with opening quote mark */}
+                {/* Quote */}
                 <p className="italic text-slate-800 before:content-['“'] after:content-['”']">{t.text}</p>
 
                 {/* Name */}
