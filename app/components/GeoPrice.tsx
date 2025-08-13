@@ -1,135 +1,70 @@
+// app/components/GeoPrice.tsx
 "use client";
-
 import React from "react";
 
 type Props = {
-  /** Your base price in INR (e.g., 24999) */
-  baseInr: number;
-  /** small label under the price, e.g., "one-time" */
-  subLabel?: string;
-  /** optional className wrapper */
-  className?: string;
+  baseInr: number;           // e.g. 24999
+  subLabel?: string;         // e.g. "one-time"
 };
 
-type DisplayPrice = {
-  code: string;     // e.g., "USD"
-  symbol: string;   // e.g., "$"
-  amount: number;   // e.g., 299.99
-  formatted: string; // e.g., "$299.99"
-};
-
-const FALLBACK: DisplayPrice = {
-  code: "INR",
-  symbol: "₹",
-  amount: 0,
-  formatted: "₹0",
-};
-
-function fmtCurrency(amount: number, code: string) {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 0, // looks nicer for course pricing; change to 2 if you want cents
-    }).format(amount);
-  } catch {
-    // Rare currencies might fail; fallback to simple formatting
-    return `${amount.toFixed(0)} ${code}`;
-  }
-}
-
-export default function GeoPrice({ baseInr, subLabel, className }: Props) {
-  const [price, setPrice] = React.useState<DisplayPrice>({
-    ...FALLBACK,
+export default function GeoPrice({ baseInr, subLabel }: Props) {
+  const [state, setState] = React.useState<{
+    loading: boolean;
+    symbol: string;
+    code: string;
+    amount: number;
+  }>({
+    loading: true,
+    symbol: "₹",
+    code: "INR",
     amount: baseInr,
-    formatted: fmtCurrency(baseInr, "INR"),
   });
-  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    let canceled = false;
-
+    let dead = false;
     async function run() {
       try {
-        // 1) Detect visitor's currency via Abstract IP Geolocation
-        const key = process.env.NEXT_PUBLIC_ABSTRACT_API_KEY;
-        const geoUrl = `https://ipgeolocation.abstractapi.com/v1/?api_key=${key}`;
-        const geoRes = await fetch(geoUrl);
-        const geo = await geoRes.json();
+        const res = await fetch(`/api/geo-price?baseInr=${baseInr}`, { cache: "no-store" });
+        const json = await res.json();
+        if (dead) return;
 
-        // Abstract returns: { currency: { code, symbol, ... }, country_code, ... }
-        const currencyCode: string = geo?.currency?.code || "INR";
-        const currencySymbol: string = geo?.currency?.symbol || "₹";
-
-        // If currency is already INR, no conversion needed
-        if (currencyCode === "INR") {
-          if (!canceled) {
-            setPrice({
-              code: "INR",
-              symbol: "₹",
-              amount: baseInr,
-              formatted: fmtCurrency(baseInr, "INR"),
-            });
-          }
-          return;
-        }
-
-        // 2) Convert INR -> local currency using a free ECB rates API (no key needed)
-        // Docs: https://www.frankfurter.app/
-        const rateUrl = `https://api.frankfurter.app/latest?from=INR&to=${currencyCode}`;
-        const rateRes = await fetch(rateUrl);
-        if (!rateRes.ok) throw new Error("Rate API failed");
-        const rateData = await rateRes.json();
-
-        const rate = rateData?.rates?.[currencyCode];
-        if (!rate) throw new Error("Rate not found");
-
-        const converted = baseInr * rate;
-
-        if (!canceled) {
-          setPrice({
-            code: currencyCode,
-            symbol: currencySymbol,
-            amount: converted,
-            formatted: fmtCurrency(converted, currencyCode),
+        if (json?.ok && json?.currency && json?.price) {
+          setState({
+            loading: false,
+            symbol: json.currency.symbol || "₹",
+            code: json.currency.code || "INR",
+            amount: json.price.converted ?? baseInr,
           });
+        } else {
+          setState((s) => ({ ...s, loading: false }));
         }
-      } catch (e) {
-        // On any error: show INR, no crash
-        if (!canceled) {
-          setPrice({
-            code: "INR",
-            symbol: "₹",
-            amount: baseInr,
-            formatted: fmtCurrency(baseInr, "INR"),
-          });
-        }
-      } finally {
-        if (!canceled) setLoading(false);
+      } catch {
+        setState((s) => ({ ...s, loading: false }));
       }
     }
-
     run();
     return () => {
-      canceled = true;
+      dead = true;
     };
   }, [baseInr]);
 
-  return (
-    <div className={className}>
-      <div className="mt-4 flex items-end gap-2">
-        {/* Symbol kept small to look neat */}
-        <div className="text-2xl font-semibold">{price.symbol}</div>
-        <div className="text-5xl font-extrabold tracking-tight">
-          {loading ? "…" : price.formatted.replace(price.symbol, "").trim()}
-        </div>
-        <div className="text-slate-500 mb-1 text-sm">{loading ? "" : price.code}</div>
+  if (state.loading) {
+    return (
+      <div className="flex items-end gap-2">
+        <div className="h-8 w-20 rounded bg-slate-200 animate-pulse" />
       </div>
-      {subLabel && (
-        <div className="text-slate-500 mb-1 text-sm">{subLabel}</div>
-      )}
-      {/* Optional tiny note—remove if you don't want it */}
-      {/* <div className="text-[11px] text-slate-400 mt-1">Converted from INR at current ECB rates.</div> */}
+    );
+  }
+
+  return (
+    <div className="flex items-end gap-2">
+      <div className="text-2xl font-semibold">{state.symbol}</div>
+      <div className="text-5xl font-extrabold tracking-tight">
+        {state.amount.toLocaleString()}
+      </div>
+      <div className="text-slate-500 mb-1 text-sm">
+        {state.code}{subLabel ? ` • ${subLabel}` : ""}
+      </div>
     </div>
   );
 }
