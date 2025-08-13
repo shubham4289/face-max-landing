@@ -170,8 +170,92 @@ const testimonials = [
     stars: 5,
   },
 ];
+// ---- Dynamic price (base is INR 24,999) ----
+const BASE_PRICE_INR = 24999;
 
-export default function Page() {
+// Just a small symbol map for nice display (Intl will format currency too)
+const CURRENCY_SYMBOL: Record<string, string> = {
+  INR: "₹",
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  AUD: "A$",
+  CAD: "C$",
+  SGD: "S$",
+  AED: "د.إ",
+  JPY: "¥",
+};
+
+export default function Page() {   // Local price state shown in the Pricing card
+  const [displayPrice, setDisplayPrice] = React.useState<{
+    code: string;
+    symbol: string;
+    formatted: string; // a nice, ready-to-show number like 299 or 24,999
+  }>({
+    code: "INR",
+    symbol: "₹",
+    formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
+  });
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    (async () => {
+      try {
+        // 1) Ask our server for visitor's currency (via Abstract)
+        const geo = await fetch("/api/geo").then((r) => r.json());
+        const code = (geo?.currency?.code || "INR").toUpperCase();
+
+        // 2) If not INR, convert the base price on the server
+        if (code !== "INR") {
+          const conv = await fetch(
+            `/api/convert?from=INR&to=${encodeURIComponent(code)}&amount=${BASE_PRICE_INR}`
+          ).then((r) => r.json());
+
+          if (!isCancelled && conv?.value) {
+            const formatted = new Intl.NumberFormat(undefined, {
+              style: "currency",
+              currency: code,
+              maximumFractionDigits: 0,
+            }).format(conv.value);
+
+            // We store the number part and show the symbol separately for layout control
+            const symbol = CURRENCY_SYMBOL[code] || code;
+            const numberOnly = formatted.replace(/[^\d.,]/g, "").trim();
+
+            setDisplayPrice({
+              code,
+              symbol,
+              formatted: numberOnly,
+            });
+            return;
+          }
+        }
+
+        // Fallback to INR if anything fails
+        if (!isCancelled) {
+          setDisplayPrice({
+            code: "INR",
+            symbol: "₹",
+            formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
+          });
+        }
+      } catch {
+        if (!isCancelled) {
+          setDisplayPrice({
+            code: "INR",
+            symbol: "₹",
+            formatted: BASE_PRICE_INR.toLocaleString("en-IN"),
+          });
+        }
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
     const [trailerOpen, setTrailerOpen] = useState(false);
   
   return (
@@ -361,10 +445,11 @@ export default function Page() {
                 </div>
 
                 <div className="mt-4 flex items-end gap-2">
-                  <IndianRupee className="w-5 h-5" />
-                  <div className="text-5xl font-extrabold tracking-tight">24,999</div>
-                  <div className="text-slate-500 mb-1 text-sm">one-time</div>
-                </div>
+  <div className="text-2xl font-semibold">{displayPrice.symbol}</div>
+  <div className="text-5xl font-extrabold tracking-tight">{displayPrice.formatted}</div>
+  <div className="text-slate-500 mb-1 text-sm">{displayPrice.code}</div>
+</div>
+
 
                 <ul className="mt-4 space-y-2 text-sm text-slate-700">
                   <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 mt-0.5" /> Lifetime access to all modules</li>
