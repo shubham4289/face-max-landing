@@ -15,8 +15,8 @@ export default function GeoPrice({ baseInr, subLabel }: Props) {
     amount: number;
   }>({
     loading: true,
-    symbol: "₹",
-    code: "INR",
+    symbol: "$",
+    code: "USD",
     amount: baseInr,
   });
 
@@ -31,8 +31,8 @@ export default function GeoPrice({ baseInr, subLabel }: Props) {
         if (json?.ok && json?.currency && json?.price) {
           setState({
             loading: false,
-            symbol: json.currency.symbol || "₹",
-            code: json.currency.code || "INR",
+            symbol: json.currency.symbol || "$",
+            code: json.currency.code || "USD",
             amount: json.price.converted ?? baseInr,
           });
         } else {
