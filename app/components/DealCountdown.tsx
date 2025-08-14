@@ -9,7 +9,8 @@ type Props = {
 };
 
 export default function DealCountdown({ minutes = 10, anchorId = "#pricing" }: Props) {
-  const [remaining, setRemaining] = useState<number>(0);
+  // Start with the full duration so the timer doesn't briefly show 0:00
+  const [remaining, setRemaining] = useState<number>(minutes * 60 * 1000);
   const [dismissed, setDismissed] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
