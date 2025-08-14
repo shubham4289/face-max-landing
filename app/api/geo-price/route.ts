@@ -27,7 +27,14 @@ const INR_RATES: Record<string, { rate: number; symbol: string }> = {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const baseInr = Number(searchParams.get("baseInr") || "0");
+    const baseInrParam = searchParams.get("baseInr");
+    const baseInr = Number(baseInrParam);
+    if (!baseInrParam || !Number.isFinite(baseInr) || baseInr <= 0) {
+      return NextResponse.json(
+        { error: "Invalid or missing baseInr" },
+        { status: 400 }
+      );
+    }
 
     // Works on Vercel: picks first IP in x-forwarded-for if present
     const fwd = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim();
