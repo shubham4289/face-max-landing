@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "framer-motion": "11.2.10",
@@ -16,11 +17,14 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "20.12.7",
+    "@types/react": "18.2.73",
     "autoprefixer": "10.4.19",
+    "jest": "^30.0.5",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.7",
-    "typescript": "5.4.5",
-    "@types/react": "18.2.73",
-    "@types/node": "20.12.7"
+    "ts-jest": "^29.4.1",
+    "typescript": "5.4.5"
   }
 }
