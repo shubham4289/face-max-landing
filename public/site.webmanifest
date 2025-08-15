@@ -1,0 +1,11 @@
+{
+  "name": "Face Max Academy",
+  "short_name": "Face Max",
+  "icons": [
+    { "src": "/icons/face-max-icon.png?v=5", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/face-max-icon.png?v=5",     "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
