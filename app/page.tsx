@@ -130,6 +130,14 @@ const modules = [
       "Delivering restorations with function & aesthetics",
     ],
   },
+  {
+    week: "Module 8",
+    title: "From Crisis to Confidence — Full-Scope Complication Management Protocols",
+    bullets: [
+      "Management of complications during surgery",
+      "Management of prosthetic & all other complications after the surgical phase",
+    ],
+  },
 ];
 
 const faqs = [
