@@ -46,7 +46,7 @@ const features = [
   {
     icon: <img src="/icons/implant.png" alt="Dental implant icon" width={28} height={28} className="w-7 h-7" />,
     title: "Every Clinical Scenario Covered",
-    text: "From single-tooth to full-arch — master protocols for every case you’ll meet in real practice.",
+    text: "From single-tooth to multiple implants— master protocols for every case you’ll meet in real practice.",
   },
   {
     icon: <img src="/icons/scalpel.png" alt="Scalpel icon" width={28} height={28} className="w-7 h-7" />,
@@ -290,8 +290,8 @@ export default function Page() {
 
           <div className="mt-10 grid md:grid-cols-3 gap-6">
             <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
-              <h3 className="font-semibold">Signature Implantology Books</h3>
-              <p className="mt-2 text-sm text-slate-600">Includes two members-only signature implant books by Face Max Academy.</p>
+              <h3 className="font-semibold">Signature Implantology Books Free</h3>
+              <p className="mt-2 text-sm text-slate-600">Includes members-only books on Contemporary implant Protocols I & II by Face Max Academy.</p>
             </div>
             <div className="rounded-2xl border p-6 bg-white shadow-sm hover:shadow-md transition">
               <h3 className="font-semibold">Complete Implant Training</h3>
