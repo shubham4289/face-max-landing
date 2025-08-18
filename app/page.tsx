@@ -205,6 +205,34 @@ export default function Page() {
       {/* Spacer so the bar doesn’t cover the hero (matches header + bar height) */}
       <div aria-hidden className="h-16 md:h-20"></div>
 
+      {/* VdoCipher Player */}
+      <div className="flex justify-center py-8">
+        <iframe
+          id="vdoplayer"
+          width="720"
+          height="405"
+          allow="encrypted-media"
+          allowFullScreen
+          style={{ border: 0 }}
+        ></iframe>
+      </div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
+            fetch(\`/api/get-otp?videoId=\${encodeURIComponent(VIDEO_ID)}\`, { cache: 'no-store' })
+              .then(res => res.json())
+              .then(({ otp, playbackInfo }) => {
+                const iframe = document.getElementById('vdoplayer');
+                if (iframe) {
+                  iframe.src = \`https://player.vdocipher.com/v2/?otp=\${otp}&playbackInfo=\${playbackInfo}\`;
+                }
+              })
+              .catch(() => alert('Failed to load video'));
+          `,
+        }}
+      />
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 flex flex-col items-center text-center">
