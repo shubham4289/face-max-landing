@@ -118,8 +118,7 @@ const modules = [
       "Evidence-based patient aftercare",
       "Pain, swelling, & inflammation control",
       "Proactive complication prevention strategies",
-      "From Crisis to Confidence — Full-Scope Complication Protocols",
-    ],
+      ],
   },
   {
     week: "Module 7",
