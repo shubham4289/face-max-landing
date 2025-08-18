@@ -126,7 +126,6 @@ const modules = [
     bullets: [
       "Abutment selection & crown placement workflow",
       "Impression techniques for precision fit",
-      "Delivering restorations with function & aesthetics",
     ],
   },
   {
