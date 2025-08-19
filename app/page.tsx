@@ -219,8 +219,11 @@ export default function Page() {
       <script
         dangerouslySetInnerHTML={{
           __html: `
-            const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
-            fetch(\`/api/get-otp?videoId=\${encodeURIComponent(VIDEO_ID)}\`, { cache: 'no-store' })
+              const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
+              const params = new URLSearchParams({ videoId: VIDEO_ID });
+              if (window.viewerName) params.append('viewerName', window.viewerName);
+              if (window.viewerEmail) params.append('viewerEmail', window.viewerEmail);
+              fetch(\`/api/get-otp?\${params.toString()}\`, { cache: 'no-store' })
               .then(res => res.json())
               .then(({ otp, playbackInfo }) => {
                 const iframe = document.getElementById('vdoplayer');
