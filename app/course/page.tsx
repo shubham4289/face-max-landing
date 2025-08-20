@@ -82,12 +82,9 @@ export default function CourseUdemyLike() {
   const flat = useMemo(() => sections.flatMap((s) => s.lectures), []);
   const idx = flat.findIndex((l) => l.embedUrl === active.embedUrl) + 1;
 
-  // manage which section is open
   const [open, setOpen] = useState<Record<number, boolean>>(() =>
     sections.reduce((a, _, i) => ((a[i] = i === 0), a), {} as Record<number, boolean>)
   );
-
-  // completed checkboxes (local only)
   const [done, setDone] = useState<Record<string, boolean>>({});
 
   return (
@@ -102,9 +99,8 @@ export default function CourseUdemyLike() {
       </div>
 
       <div className="mx-auto max-w-[1200px] px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-24">
-        {/* LEFT: Player + tabs */}
+        {/* LEFT */}
         <div>
-          {/* Player */}
           <div className="aspect-video w-full rounded-sm bg-black overflow-hidden border border-neutral-200">
             <iframe
               key={active.embedUrl}
@@ -116,32 +112,28 @@ export default function CourseUdemyLike() {
             />
           </div>
 
-          {/* Title / meta */}
           <div className="mt-4">
             <h1 className="text-xl font-semibold leading-snug">{active.title}</h1>
             <p className="text-sm text-neutral-600 mt-1">Lesson {String(idx).padStart(2, "0")} • {active.duration}</p>
           </div>
 
-          {/* Tabs (static) */}
+          {/* Tabs — Q&A and Reviews removed */}
           <div className="mt-6 border-b border-neutral-200">
             <div className="flex gap-6 text-sm">
               <button className="py-3 border-b-2 border-black font-medium">Overview</button>
-              <button className="py-3 text-neutral-600">Q&A</button>
               <button className="py-3 text-neutral-600">Notes</button>
               <button className="py-3 text-neutral-600">Announcements</button>
-              <button className="py-3 text-neutral-600">Reviews</button>
               <button className="py-3 text-neutral-600">Learning tools</button>
             </div>
           </div>
 
-          {/* Overview content (minimal placeholder) */}
           <div className="mt-4 text-sm leading-6 text-neutral-700">
             This is your comprehensive program for mastering dental implants — real‑world workflows,
             clear anatomy, and proven protocols. Lifetime access • Certificate • Continuous updates.
           </div>
         </div>
 
-        {/* RIGHT: Sidebar content (sticky) */}
+        {/* RIGHT: Sidebar */}
         <aside className="lg:sticky lg:top-6 h-fit">
           <div className="border border-neutral-200 rounded-sm">
             <div className="px-4 py-3 border-b border-neutral-200">
@@ -151,7 +143,6 @@ export default function CourseUdemyLike() {
               </div>
             </div>
 
-            {/* Accordion */}
             <div className="divide-y divide-neutral-200">
               {sections.map((sec, si) => {
                 const isOpen = open[si];
@@ -174,39 +165,23 @@ export default function CourseUdemyLike() {
                           const key = `${sec.title}__${lec.title}`;
                           const activeRow = active.embedUrl === lec.embedUrl;
                           return (
-                            <li
-                              key={li}
-                              className={[
-                                "rounded-sm",
-                                activeRow ? "bg-neutral-100" : "",
-                              ].join(" ")}
-                            >
+                            <li key={li} className={["rounded-sm", activeRow ? "bg-neutral-100" : ""].join(" ")}>
                               <button
                                 onClick={() => setActive(lec)}
                                 className="w-full px-3 py-2 flex items-center gap-3 text-left"
                               >
-                                {/* checkbox */}
                                 <input
                                   type="checkbox"
                                   className="mt-[1px] h-4 w-4"
                                   checked={!!done[key]}
-                                  onChange={(e) =>
-                                    setDone((d) => ({ ...d, [key]: e.target.checked }))
-                                  }
+                                  onChange={(e) => setDone((d) => ({ ...d, [key]: e.target.checked }))}
                                   onClick={(e) => e.stopPropagation()}
                                 />
                                 <div className="flex-1">
-                                  <div
-                                    className={[
-                                      "text-sm",
-                                      activeRow ? "font-medium" : "text-neutral-800",
-                                    ].join(" ")}
-                                  >
+                                  <div className={["text-sm", activeRow ? "font-medium" : "text-neutral-800"].join(" ")}>
                                     {lec.title}
                                   </div>
-                                  <div className="text-xs text-neutral-500 mt-[2px]">
-                                    {lec.duration}
-                                  </div>
+                                  <div className="text-xs text-neutral-500 mt-[2px]">{lec.duration}</div>
                                 </div>
                               </button>
                             </li>
