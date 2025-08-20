@@ -2,193 +2,225 @@
 
 import { useMemo, useState } from "react";
 
-type Lecture = { title: string; embedUrl: string };
-type Section = { title: string; lectures: Lecture[] };
+type Lecture = { title: string; duration: string; embedUrl: string };
+type Section = { title: string; total: string; lectures: Lecture[] };
 
-const courseStructure: Section[] = [
+const sections: Section[] = [
   {
     title: "1. Introduction to Dental Implants",
+    total: "2 lectures • 12m",
     lectures: [
-      { title: "What is a dental implant?", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
-      { title: "When and why implants are needed.", embedUrl: "https://player.vimeo.com/video/76979871" },
+      { title: "What is a dental implant?", duration: "6m", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
+      { title: "When and why implants are needed.", duration: "6m", embedUrl: "https://player.vimeo.com/video/76979871" },
     ],
   },
   {
     title: "2. Basic Anatomy for Implantology",
+    total: "4 lectures • 28m",
     lectures: [
-      { title: "UNDERSTANDING BONE & soft tissue", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-      { title: "UNDERSTANDING bone density", embedUrl: "https://player.vimeo.com/video/357274789" },
-      { title: "UNDERSTANDING NERVES AND SINUS ANATOMY", embedUrl: "https://www.youtube.com/embed/DLX62G4lc44" },
-      { title: "UNDERSTANDING THE NORMAL AND CONCLUSION", embedUrl: "https://player.vimeo.com/video/22439234" },
+      { title: "UNDERSTANDING BONE & soft tissue", duration: "8m", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
+      { title: "UNDERSTANDING bone density", duration: "6m", embedUrl: "https://player.vimeo.com/video/357274789" },
+      { title: "UNDERSTANDING NERVES AND SINUS ANATOMY", duration: "8m", embedUrl: "https://www.youtube.com/embed/DLX62G4lc44" },
+      { title: "UNDERSTANDING THE NORMAL AND CONCLUSION", duration: "6m", embedUrl: "https://player.vimeo.com/video/22439234" },
     ],
   },
   {
     title: "3. Essential Equipment & Materials",
+    total: "3 lectures • 22m",
     lectures: [
-      { title: "Every Instrument, Every Purpose — Unpacked", embedUrl: "https://www.youtube.com/embed/aqz-KE-bpKQ" },
-      { title: "UNDERSTANDING IMPLANT PLATFORMS, WHAT TO CHOOSE WHEN", embedUrl: "https://player.vimeo.com/video/1084537" },
-      { title: "EXACT ASSEMBLY LINE ! & CONCLUSION", embedUrl: "https://www.youtube.com/embed/2Vv-BfVoq4g" },
+      { title: "Every Instrument, Every Purpose — Unpacked", duration: "8m", embedUrl: "https://www.youtube.com/embed/aqz-KE-bpKQ" },
+      { title: "UNDERSTANDING IMPLANT PLATFORMS, WHAT TO CHOOSE WHEN", duration: "7m", embedUrl: "https://player.vimeo.com/video/1084537" },
+      { title: "EXACT ASSEMBLY LINE ! & CONCLUSION", duration: "7m", embedUrl: "https://www.youtube.com/embed/2Vv-BfVoq4g" },
     ],
   },
   {
     title: "4. Treatment Planning & Case Selection",
+    total: "3 lectures • 20m",
     lectures: [
-      { title: "Critical medical & dental history that really matters", embedUrl: "https://www.youtube.com/embed/2OEL4P1Rz04" },
-      { title: "Radiographic assessment and site mapping (CBCT, OPG).", embedUrl: "https://player.vimeo.com/video/148751763" },
-      { title: "CHOOSING THE CORRECT IMPLANT FOR THE CORRECT SITE", embedUrl: "https://www.youtube.com/embed/3fumBcKC6RE" },
+      { title: "Critical medical & dental history that really matters", duration: "7m", embedUrl: "https://www.youtube.com/embed/2OEL4P1Rz04" },
+      { title: "Radiographic assessment and site mapping (CBCT, OPG).", duration: "6m", embedUrl: "https://player.vimeo.com/video/148751763" },
+      { title: "CHOOSING THE CORRECT IMPLANT FOR THE CORRECT SITE", duration: "7m", embedUrl: "https://www.youtube.com/embed/3fumBcKC6RE" },
     ],
   },
   {
     title: "5. Surgical Protocols From Flap to Final Suture",
+    total: "2 lectures • 16m",
     lectures: [
-      { title: "Lights, Camera, Action! – INCISION TO PLACEMENT (step‑by‑step)", embedUrl: "https://player.vimeo.com/video/137857207" },
-      { title: "Proper suturing & flap closure", embedUrl: "https://www.youtube.com/embed/9bZkp7q19f0" },
+      { title: "Lights, Camera, Action! – INCISION TO PLACEMENT STEP‑BY‑STEP", duration: "9m", embedUrl: "https://player.vimeo.com/video/137857207" },
+      { title: "Proper suturing & flap closure", duration: "7m", embedUrl: "https://www.youtube.com/embed/9bZkp7q19f0" },
     ],
   },
   {
     title: "6. Post‑Operative Care & Healing",
+    total: "3 lectures • 18m",
     lectures: [
-      { title: "Evidence‑based patient aftercare", embedUrl: "https://player.vimeo.com/video/76979871" },
-      { title: "Pain, swelling & inflammation control", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
-      { title: "Recognizing complications & management", embedUrl: "https://player.vimeo.com/video/22439234" },
+      { title: "Evidence‑based patient aftercare", duration: "6m", embedUrl: "https://player.vimeo.com/video/76979871" },
+      { title: "Pain, swelling, & inflammation control", duration: "6m", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
+      { title: "Recognizing complication and managing them", duration: "6m", embedUrl: "https://player.vimeo.com/video/22439234" },
     ],
   },
   {
     title: "7. Full‑Scope Complication Management Protocols",
+    total: "2 lectures • 14m",
     lectures: [
-      { title: "Management of complications during surgery", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-      { title: "Management of prosthetic & other post‑surgical complications", embedUrl: "https://player.vimeo.com/video/357274789" },
+      { title: "Management of complications During surgery", duration: "7m", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
+      { title: "Management of Prosthetic & other complications after surgical part", duration: "7m", embedUrl: "https://player.vimeo.com/video/357274789" },
     ],
   },
   {
     title: "8. Prosthetic Phase & Long‑Term Success",
+    total: "2 lectures • 14m",
     lectures: [
-      { title: "Impression techniques for precision fit", embedUrl: "https://player.vimeo.com/video/1084537" },
-      { title: "Abutment selection & crown placement workflow", embedUrl: "https://www.youtube.com/embed/DLX62G4lc44" },
+      { title: "Impression techniques for precision fit", duration: "7m", embedUrl: "https://player.vimeo.com/video/1084537" },
+      { title: "Abutment selection & crown placement workflow", duration: "7m", embedUrl: "https://www.youtube.com/embed/DLX62G4lc44" },
     ],
   },
 ];
 
-export default function CoursePage() {
-  const [selected, setSelected] = useState<Lecture>(courseStructure[0].lectures[0]);
+export default function CourseUdemyLike() {
+  const [active, setActive] = useState<Lecture>(sections[0].lectures[0]);
+  const flat = useMemo(() => sections.flatMap((s) => s.lectures), []);
+  const idx = flat.findIndex((l) => l.embedUrl === active.embedUrl) + 1;
 
-  // Build a flat index for numbered items shown in the right title
-  const flatList = useMemo(() => {
-    const list: { section: string; lecture: Lecture; index: number }[] = [];
-    let idx = 1;
-    for (const s of courseStructure) {
-      for (const l of s.lectures) {
-        list.push({ section: s.title, lecture: l, index: idx++ });
-      }
-    }
-    return list;
-  }, []);
+  // manage which section is open
+  const [open, setOpen] = useState<Record<number, boolean>>(() =>
+    sections.reduce((a, _, i) => ((a[i] = i === 0), a), {} as Record<number, boolean>)
+  );
 
-  const current = flatList.find((x) => x.lecture.embedUrl === selected.embedUrl);
+  // completed checkboxes (local only)
+  const [done, setDone] = useState<Record<string, boolean>>({});
 
   return (
-    <div className="min-h-screen bg-[#0B0B0E] text-white">
-      {/* Header */}
-      <header className="border-b border-white/10">
-        <div className="mx-auto max-w-7xl px-4 py-5">
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            Dental Implant Mastery
-          </h1>
-          <p className="mt-1 text-sm text-white/60">
-            Lifetime access • Certificate • Continuous updates
-          </p>
+    <div className="min-h-screen bg-white text-[#111]">
+      {/* Top bar */}
+      <div className="border-b border-neutral-200">
+        <div className="mx-auto max-w-[1200px] px-4 py-3 flex items-center gap-3">
+          <div className="font-semibold">The Face Max</div>
+          <div className="text-neutral-400">|</div>
+          <div className="text-sm text-neutral-600">Dental Implant Mastery</div>
         </div>
-      </header>
-
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 py-6 grid grid-cols-1 lg:grid-cols-[360px,1fr] gap-6">
-        {/* Sidebar */}
-        <aside className="lg:sticky lg:top-6 self-start">
-          <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
-            <div className="px-5 py-4 border-b border-white/10">
-              <h2 className="text-lg font-medium">Course Content</h2>
-              <p className="mt-1 text-xs text-white/60">
-                Select a lesson to play. (Secure VdoCipher will replace these dummy videos next.)
-              </p>
-            </div>
-
-            <nav className="divide-y divide-white/10">
-              {courseStructure.map((section, si) => (
-                <div key={si} className="px-5 py-4">
-                  <div className="text-sm font-semibold text-white/90 mb-3">
-                    {section.title}
-                  </div>
-                  <ul className="space-y-1.5">
-                    {section.lectures.map((lec, li) => {
-                      const active = selected.embedUrl === lec.embedUrl;
-                      return (
-                        <li key={li}>
-                          <button
-                            onClick={() => setSelected(lec)}
-                            className={[
-                              "w-full text-left px-3 py-2 rounded-md text-sm transition-none",
-                              active
-                                ? "bg-white text-black"
-                                : "bg-white/0 hover:bg-white/10 text-white/90",
-                            ].join(" ")}
-                          >
-                            {lec.title}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-            </nav>
-          </div>
-        </aside>
-
-        {/* Player */}
-        <main className="space-y-4">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4 md:p-5">
-            <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
-              <iframe
-                key={selected.embedUrl}
-                src={selected.embedUrl}
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-baseline justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-white/50">Now Playing</p>
-                <h3 className="mt-1 text-xl font-medium leading-snug text-white/95">
-                  {selected.title}
-                </h3>
-                {current && (
-                  <p className="mt-1 text-sm text-white/60">
-                    {current.section}
-                  </p>
-                )}
-              </div>
-              {current && (
-                <div className="hidden sm:block text-right">
-                  <span className="inline-flex items-center rounded-md border border-white/15 px-2.5 py-1 text-xs text-white/70">
-                    Lesson {current.index.toString().padStart(2, "0")}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-8 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-xs text-white/50">
-          © {new Date().getFullYear()} The Face Max. All rights reserved.
+      <div className="mx-auto max-w-[1200px] px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-24">
+        {/* LEFT: Player + tabs */}
+        <div>
+          {/* Player */}
+          <div className="aspect-video w-full rounded-sm bg-black overflow-hidden border border-neutral-200">
+            <iframe
+              key={active.embedUrl}
+              src={active.embedUrl}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              title={active.title}
+            />
+          </div>
+
+          {/* Title / meta */}
+          <div className="mt-4">
+            <h1 className="text-xl font-semibold leading-snug">{active.title}</h1>
+            <p className="text-sm text-neutral-600 mt-1">Lesson {String(idx).padStart(2, "0")} • {active.duration}</p>
+          </div>
+
+          {/* Tabs (static) */}
+          <div className="mt-6 border-b border-neutral-200">
+            <div className="flex gap-6 text-sm">
+              <button className="py-3 border-b-2 border-black font-medium">Overview</button>
+              <button className="py-3 text-neutral-600">Q&A</button>
+              <button className="py-3 text-neutral-600">Notes</button>
+              <button className="py-3 text-neutral-600">Announcements</button>
+              <button className="py-3 text-neutral-600">Reviews</button>
+              <button className="py-3 text-neutral-600">Learning tools</button>
+            </div>
+          </div>
+
+          {/* Overview content (minimal placeholder) */}
+          <div className="mt-4 text-sm leading-6 text-neutral-700">
+            This is your comprehensive program for mastering dental implants — real‑world workflows,
+            clear anatomy, and proven protocols. Lifetime access • Certificate • Continuous updates.
+          </div>
         </div>
-      </footer>
+
+        {/* RIGHT: Sidebar content (sticky) */}
+        <aside className="lg:sticky lg:top-6 h-fit">
+          <div className="border border-neutral-200 rounded-sm">
+            <div className="px-4 py-3 border-b border-neutral-200">
+              <div className="text-sm font-semibold">Course content</div>
+              <div className="text-xs text-neutral-500 mt-1">
+                {sections.reduce((a, s) => a + s.lectures.length, 0)} lectures • ~2h 25m
+              </div>
+            </div>
+
+            {/* Accordion */}
+            <div className="divide-y divide-neutral-200">
+              {sections.map((sec, si) => {
+                const isOpen = open[si];
+                return (
+                  <div key={si}>
+                    <button
+                      className="w-full px-4 py-3 flex items-center justify-between"
+                      onClick={() => setOpen((m) => ({ ...m, [si]: !m[si] }))}
+                    >
+                      <div className="text-sm font-medium text-left">{sec.title}</div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-neutral-500">{sec.total}</span>
+                        <span className="text-neutral-400">{isOpen ? "▾" : "▸"}</span>
+                      </div>
+                    </button>
+
+                    {isOpen && (
+                      <ul className="px-2 py-2">
+                        {sec.lectures.map((lec, li) => {
+                          const key = `${sec.title}__${lec.title}`;
+                          const activeRow = active.embedUrl === lec.embedUrl;
+                          return (
+                            <li
+                              key={li}
+                              className={[
+                                "rounded-sm",
+                                activeRow ? "bg-neutral-100" : "",
+                              ].join(" ")}
+                            >
+                              <button
+                                onClick={() => setActive(lec)}
+                                className="w-full px-3 py-2 flex items-center gap-3 text-left"
+                              >
+                                {/* checkbox */}
+                                <input
+                                  type="checkbox"
+                                  className="mt-[1px] h-4 w-4"
+                                  checked={!!done[key]}
+                                  onChange={(e) =>
+                                    setDone((d) => ({ ...d, [key]: e.target.checked }))
+                                  }
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                                <div className="flex-1">
+                                  <div
+                                    className={[
+                                      "text-sm",
+                                      activeRow ? "font-medium" : "text-neutral-800",
+                                    ].join(" ")}
+                                  >
+                                    {lec.title}
+                                  </div>
+                                  <div className="text-xs text-neutral-500 mt-[2px]">
+                                    {lec.duration}
+                                  </div>
+                                </div>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
