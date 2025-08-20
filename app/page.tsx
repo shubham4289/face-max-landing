@@ -216,25 +216,36 @@ export default function Page() {
           style={{ border: 0 }}
         ></iframe>
       </div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-              const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
-              const params = new URLSearchParams({ videoId: VIDEO_ID });
-              if (window.viewerName) params.append('viewerName', window.viewerName);
-              if (window.viewerEmail) params.append('viewerEmail', window.viewerEmail);
-              fetch(\`/api/get-otp?\${params.toString()}\`, { cache: 'no-store' })
-              .then(res => res.json())
-              .then(({ otp, playbackInfo }) => {
-                const iframe = document.getElementById('vdoplayer');
-                if (iframe) {
-                  iframe.src = \`https://player.vdocipher.com/v2/?otp=\${otp}&playbackInfo=\${playbackInfo}\`;
-                }
-              })
-              .catch(() => alert('Failed to load video'));
-          `,
-        }}
-      />
+     <script
+  dangerouslySetInnerHTML={{
+    __html: `
+      (function () {
+        const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
+
+        // 1) Get viewer info from URL (?name=...&email=...) or use defaults for testing
+        const qs = new URLSearchParams(window.location.search);
+        const viewerName  = qs.get('name')  || 'Demo Student';
+        const viewerEmail = qs.get('email') || 'demo.student@example.com';
+
+        // 2) Ask our backend for OTP + playbackInfo (includes watermark "annotate")
+        const params = new URLSearchParams({ videoId: VIDEO_ID, viewerName, viewerEmail });
+        fetch('/api/get-otp?' + params.toString(), { cache: 'no-store' })
+          .then(res => res.json())
+          .then(({ otp, playbackInfo }) => {
+            const iframe = document.getElementById('vdoplayer');
+            if (!iframe) return;
+            // 3) Build the secure player URL — encode values!
+            const src =
+              'https://player.vdocipher.com/v2/?otp=' + encodeURIComponent(otp) +
+              '&playbackInfo=' + encodeURIComponent(playbackInfo);
+            iframe.src = src;
+          })
+          .catch(() => alert('Failed to load secure video'));
+      })();
+    `,
+  }}
+/>
+
 
       {/* Hero */}
       <section className="relative overflow-hidden">
