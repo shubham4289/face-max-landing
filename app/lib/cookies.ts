@@ -11,10 +11,17 @@ export function getSession(): Session | null {
   const raw = cookies().get("session")?.value;
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as Session; // matches setSession({ userId, name, email })
+    return JSON.parse(raw) as Session; 
   } catch {
     return null;
   }
 }
 
-// (you already have setSession in this file, keep it as-is)
+export function setSession(session: Session) {
+  cookies().set("session", JSON.stringify(session), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
+}
