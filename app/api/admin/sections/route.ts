@@ -1,7 +1,11 @@
 // app/api/admin/sections/route.ts
 import { NextResponse } from 'next/server';
+import { sql } from '@/app/lib/db';
+import { ensureTables } from '@/app/lib/bootstrap';
 import { assertAdmin } from '@/app/lib/admin';
-// ...other imports...
+import { randomId } from '@/app/lib/crypto';
+
+type Body = { title: string; orderIndex?: number };
 
 export async function POST(req: Request) {
   try {
@@ -10,15 +14,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // ...create section...
-  return NextResponse.json({ ok: true });
-}
-
-  const { title, orderIndex = 0 } = await req.json() as {
-    title: string;
-    orderIndex?: number;
-  };
-  if (!title) return NextResponse.json({ error: "Title required" }, { status: 400 });
+  const { title, orderIndex = 0 } = (await req.json()) as Body;
+  if (!title) return NextResponse.json({ error: 'Title required' }, { status: 400 });
 
   await ensureTables();
   const id = randomId();
@@ -28,9 +25,9 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    requireAdminEmail();
+    assertAdmin();
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const rows = await sql`SELECT id, title, order_index FROM sections ORDER BY order_index ASC, created_at ASC;`;
   return NextResponse.json(rows);
