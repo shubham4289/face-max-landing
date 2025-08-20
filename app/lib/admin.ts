@@ -1,10 +1,19 @@
 // app/lib/admin.ts
-import { getSession } from "@/app/lib/cookies";
+import 'server-only';                 // <-- prevents bundling on the client
+import { getSession } from '@/app/lib/cookies';
 
+// Use a pure checker so pages/APIs can decide how to respond.
+export function isAdmin(): boolean {
+  const admin = (process.env.ADMIN_EMAIL ?? '').toLowerCase().trim();
+  if (!admin) return false;
+
+  const s = getSession();             // uses next/headers cookies() - server only
+  return !!s?.email && s.email.toLowerCase() === admin;
+}
+
+// Optional convenience guard for APIs (call inside try/catch).
 export function assertAdmin() {
-  const admin = process.env.ADMIN_EMAIL?.toLowerCase().trim() ?? "";
-  const s = getSession();
-  if (!s || !s.email || s.email.toLowerCase() !== admin) {
-    throw new Error("Unauthorized");
+  if (!isAdmin()) {
+    throw new Error('UNAUTHORIZED');  // API routes should catch and return 401
   }
 }
