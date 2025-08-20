@@ -1,28 +1,21 @@
 // app/admin/course/page.tsx
-import { requireAdminEmail } from "@/app/lib/admin";
-import { sql } from "@/app/lib/db";
-import { ensureTables } from "@/app/lib/bootstrap";
-import { Suspense } from "react";
+// app/admin/course/page.tsx
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export const dynamic = "force-dynamic";
-
-async function getData() {
-  await ensureTables();
-  const sections = await sql`
-    SELECT id, title, order_index FROM sections ORDER BY order_index ASC, created_at ASC;
-  `;
-  const lectures = await sql`
-    SELECT id, section_id, title, order_index, video_id, duration_min
-    FROM lectures ORDER BY order_index ASC, created_at ASC;
-  `;
-  return { sections, lectures };
-}
+import { isAdmin } from '@/app/lib/admin';
+import { sql } from '@/app/lib/db';
+import { ensureTables } from '@/app/lib/bootstrap';
+import { Suspense } from 'react';
 
 export default async function AdminCoursePage() {
-  // server-side gate
-  try { requireAdminEmail(); } catch {
+  if (!isAdmin()) {
     return <div style={{ padding: 24 }}>Unauthorized</div>;
   }
+
+  await ensureTables();
+  // ...rest of the admin UI...
+}
 
   const { sections, lectures } = await getData();
 
