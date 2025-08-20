@@ -1,11 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-// ─────────────────────────────────────────────────────────────
-// STATIC COURSE OUTLINE (replace later with your real video IDs)
-// For now we use dummy embeds (YouTube/Vimeo) so layout is testable.
-// ─────────────────────────────────────────────────────────────
 type Lecture = { title: string; embedUrl: string };
 type Section = { title: string; lectures: Lecture[] };
 
@@ -45,27 +41,27 @@ const courseStructure: Section[] = [
   {
     title: "5. Surgical Protocols From Flap to Final Suture",
     lectures: [
-      { title: "Lights, Camera, Action! - INCISION TO IMPLANT PLACEMENT STEP-BY-STEP.", embedUrl: "https://player.vimeo.com/video/137857207" },
-      { title: "Proper suturing AND Flap closure- Because everyone needs a closure so do implants!", embedUrl: "https://www.youtube.com/embed/9bZkp7q19f0" },
+      { title: "Lights, Camera, Action! – INCISION TO PLACEMENT (step‑by‑step)", embedUrl: "https://player.vimeo.com/video/137857207" },
+      { title: "Proper suturing & flap closure", embedUrl: "https://www.youtube.com/embed/9bZkp7q19f0" },
     ],
   },
   {
-    title: "6. Post-Operative Care & Healing",
+    title: "6. Post‑Operative Care & Healing",
     lectures: [
-      { title: "Evidence-based patient aftercare", embedUrl: "https://player.vimeo.com/video/76979871" },
-      { title: "Pain, swelling, & inflammation control.", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
-      { title: "Recognizing Complication and managing them", embedUrl: "https://player.vimeo.com/video/22439234" },
+      { title: "Evidence‑based patient aftercare", embedUrl: "https://player.vimeo.com/video/76979871" },
+      { title: "Pain, swelling & inflammation control", embedUrl: "https://www.youtube.com/embed/ysz5S6PUM-U" },
+      { title: "Recognizing complications & management", embedUrl: "https://player.vimeo.com/video/22439234" },
     ],
   },
   {
-    title: "7. From Crisis to Confidence — Full-Scope Complication Management Protocols",
+    title: "7. Full‑Scope Complication Management Protocols",
     lectures: [
-      { title: "Management of complications During surgery", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
-      { title: "Management of Prosthetic & all other complications after surgical part", embedUrl: "https://player.vimeo.com/video/357274789" },
+      { title: "Management of complications during surgery", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4" },
+      { title: "Management of prosthetic & other post‑surgical complications", embedUrl: "https://player.vimeo.com/video/357274789" },
     ],
   },
   {
-    title: "8. Prosthetic Phase & Long-Term Success",
+    title: "8. Prosthetic Phase & Long‑Term Success",
     lectures: [
       { title: "Impression techniques for precision fit", embedUrl: "https://player.vimeo.com/video/1084537" },
       { title: "Abutment selection & crown placement workflow", embedUrl: "https://www.youtube.com/embed/DLX62G4lc44" },
@@ -74,48 +70,67 @@ const courseStructure: Section[] = [
 ];
 
 export default function CoursePage() {
-  // which lecture is selected to play
-  const [selected, setSelected] = useState<Lecture>(
-    courseStructure[0].lectures[0]
-  );
-  // which sections are expanded
-  const [open, setOpen] = useState<boolean[]>(
-    courseStructure.map(() => true) // start with all expanded; change to false to start collapsed
-  );
+  const [selected, setSelected] = useState<Lecture>(courseStructure[0].lectures[0]);
+
+  // Build a flat index for numbered items shown in the right title
+  const flatList = useMemo(() => {
+    const list: { section: string; lecture: Lecture; index: number }[] = [];
+    let idx = 1;
+    for (const s of courseStructure) {
+      for (const l of s.lectures) {
+        list.push({ section: s.title, lecture: l, index: idx++ });
+      }
+    }
+    return list;
+  }, []);
+
+  const current = flatList.find((x) => x.lecture.embedUrl === selected.embedUrl);
 
   return (
-    <div className="flex h-screen bg-black text-white">
-      {/* Sidebar */}
-      <aside className="w-full md:w-80 lg:w-96 border-r border-white/10 overflow-y-auto">
-        <div className="p-4">
-          <h2 className="text-xl font-semibold mb-3">Course Content</h2>
-          <p className="text-sm text-white/60 mb-4">
-            Click a lesson to load the player → (dummy videos for now).
+    <div className="min-h-screen bg-[#0B0B0E] text-white">
+      {/* Header */}
+      <header className="border-b border-white/10">
+        <div className="mx-auto max-w-7xl px-4 py-5">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+            Dental Implant Mastery
+          </h1>
+          <p className="mt-1 text-sm text-white/60">
+            Lifetime access • Certificate • Continuous updates
           </p>
+        </div>
+      </header>
 
-          <div className="space-y-3">
-            {courseStructure.map((section, i) => (
-              <div key={i} className="bg-white/5 rounded">
-                <button
-                  onClick={() =>
-                    setOpen((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
-                  }
-                  className="w-full text-left px-3 py-2 font-medium hover:bg-white/10 rounded"
-                >
-                  {section.title}
-                </button>
+      {/* Content */}
+      <div className="mx-auto max-w-7xl px-4 py-6 grid grid-cols-1 lg:grid-cols-[360px,1fr] gap-6">
+        {/* Sidebar */}
+        <aside className="lg:sticky lg:top-6 self-start">
+          <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
+            <div className="px-5 py-4 border-b border-white/10">
+              <h2 className="text-lg font-medium">Course Content</h2>
+              <p className="mt-1 text-xs text-white/60">
+                Select a lesson to play. (Secure VdoCipher will replace these dummy videos next.)
+              </p>
+            </div>
 
-                {open[i] && (
-                  <ul className="px-2 pb-2">
-                    {section.lectures.map((lec, j) => {
+            <nav className="divide-y divide-white/10">
+              {courseStructure.map((section, si) => (
+                <div key={si} className="px-5 py-4">
+                  <div className="text-sm font-semibold text-white/90 mb-3">
+                    {section.title}
+                  </div>
+                  <ul className="space-y-1.5">
+                    {section.lectures.map((lec, li) => {
                       const active = selected.embedUrl === lec.embedUrl;
                       return (
-                        <li key={j}>
+                        <li key={li}>
                           <button
                             onClick={() => setSelected(lec)}
-                            className={`w-full text-left px-3 py-2 rounded hover:bg-white/10 ${
-                              active ? "bg-blue-600" : ""
-                            }`}
+                            className={[
+                              "w-full text-left px-3 py-2 rounded-md text-sm transition-none",
+                              active
+                                ? "bg-white text-black"
+                                : "bg-white/0 hover:bg-white/10 text-white/90",
+                            ].join(" ")}
                           >
                             {lec.title}
                           </button>
@@ -123,26 +138,57 @@ export default function CoursePage() {
                       );
                     })}
                   </ul>
+                </div>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Player */}
+        <main className="space-y-4">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4 md:p-5">
+            <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
+              <iframe
+                key={selected.embedUrl}
+                src={selected.embedUrl}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+            <div className="flex items-baseline justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-white/50">Now Playing</p>
+                <h3 className="mt-1 text-xl font-medium leading-snug text-white/95">
+                  {selected.title}
+                </h3>
+                {current && (
+                  <p className="mt-1 text-sm text-white/60">
+                    {current.section}
+                  </p>
                 )}
               </div>
-            ))}
+              {current && (
+                <div className="hidden sm:block text-right">
+                  <span className="inline-flex items-center rounded-md border border-white/15 px-2.5 py-1 text-xs text-white/70">
+                    Lesson {current.index.toString().padStart(2, "0")}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </aside>
+        </main>
+      </div>
 
-      {/* Player area */}
-      <main className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-5xl aspect-video">
-          {/* Dummy embeds only for layout testing */}
-          <iframe
-            key={selected.embedUrl} // force re-render when switching
-            src={selected.embedUrl}
-            className="w-full h-full rounded-md"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
+      {/* Footer */}
+      <footer className="mt-8 border-t border-white/10">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-xs text-white/50">
+          © {new Date().getFullYear()} The Face Max. All rights reserved.
         </div>
-      </main>
+      </footer>
     </div>
   );
 }
