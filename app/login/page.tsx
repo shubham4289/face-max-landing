@@ -1,13 +1,32 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setMessage("Submitting… (API will be added in the next step)");
+    setMessage("");
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.otpRequired) {
+        router.push(`/login/otp?email=${encodeURIComponent(email)}`);
+      }
+    } else if (res.status === 401) {
+      setMessage("Invalid credentials");
+    } else {
+      setMessage("Error");
+    }
   }
 
   return (
@@ -18,12 +37,16 @@ export default function LoginPage() {
           required
           placeholder="Email"
           className="w-full rounded border p-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           required
           placeholder="Password"
           className="w-full rounded border p-2"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <button
           type="submit"
@@ -46,4 +69,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

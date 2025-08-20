@@ -1,12 +1,31 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function OtpPage() {
+  const search = useSearchParams();
+  const email = search.get("email") || "";
+  const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setMessage("Verifying… (API next step)");
+    setMessage("");
+    const res = await fetch("/api/auth/login-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.ok) {
+        window.location.href = '/course';
+      }
+    } else if (res.status === 401) {
+      setMessage("Invalid code");
+    } else {
+      setMessage("Error");
+    }
   }
 
   return (
@@ -19,6 +38,8 @@ export default function OtpPage() {
           required
           className="w-full rounded border p-2 text-center tracking-widest"
           placeholder="123456"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
         />
         <button
           type="submit"
@@ -33,4 +54,3 @@ export default function OtpPage() {
     </div>
   );
 }
-
