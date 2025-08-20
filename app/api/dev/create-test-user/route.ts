@@ -1,19 +1,32 @@
-import { NextResponse } from 'next/server';
-import { sql } from '@/app/lib/db';
-import { ensureTables } from '@/app/lib/bootstrap';
-import { hashPassword } from '@/app/lib/crypto';
-import { randomId } from '@/app/lib/crypto';
+import { NextResponse } from "next/server";
+import { hash } from "bcryptjs";
+import prisma from "@/app/lib/prisma";
 
-export async function POST(req: Request) {
-  await ensureTables();
-  const { name, email, password } = await req.json();
-  if (!name || !email || !password) return NextResponse.json({ error: 'name, email, password required' }, { status: 400 });
-  const id = randomId();
-  const pw = await hashPassword(password);
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const name = searchParams.get("name") || "Test User";
+  const email = searchParams.get("email");
+  const password = searchParams.get("password");
+
+  if (!email || !password) {
+    return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+  }
+
+  // hash password
+  const hashedPassword = await hash(password, 10);
+
+  // create user in DB
   try {
-    await sql`INSERT INTO users(id, email, name, password_hash) VALUES(${id}, ${email.toLowerCase()}, ${name}, ${pw});`;
-    return NextResponse.json({ ok: true, userId: id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    return NextResponse.json({ ok: true, userId: user.id });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
