@@ -25,11 +25,16 @@ export async function GET(req: Request) {
   await ensureTables();
 
   // If user already exists, return existing id (idempotent)
-  const existing = await sql<{ id: string }[]>`
+  const existing = (await sql`
     SELECT id FROM users WHERE email = ${email} LIMIT 1
-  `;
+  `) as { id: string }[];
+
   if (existing.length) {
-    return NextResponse.json({ ok: true, userId: existing[0].id, note: "already exists" });
+    return NextResponse.json({
+      ok: true,
+      userId: existing[0].id,
+      note: "already exists",
+    });
   }
 
   const id = randomId();
