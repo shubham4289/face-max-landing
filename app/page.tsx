@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Shield,
@@ -192,6 +193,12 @@ export default function Page() {
             <a href="#curriculum" className="hover:opacity-80">Curriculum</a>
             <a href="#pricing" className="hover:opacity-80">Pricing</a>
             <a href="#faq" className="hover:opacity-80">FAQ</a>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 border border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white"
+            >
+              Login
+            </Link>
             <a href="#enroll" className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 bg-slate-900 text-white">
               Enroll <ArrowRight className="w-4 h-4" />
             </a>
