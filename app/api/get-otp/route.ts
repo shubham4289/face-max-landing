@@ -36,8 +36,6 @@ async function handler(request: Request) {
   }
 
   try {
-    const annotationText = `Licensed to ${viewerName || "Student"} · ${viewerEmail || "thefacemax.com"} · {{ip}} · {{timestamp}}`;
-
     const apiRes = await fetch(`https://dev.vdocipher.com/api/videos/${videoId}/otp`, {
       method: "POST",
       headers: {
@@ -46,11 +44,16 @@ async function handler(request: Request) {
       },
       body: JSON.stringify({
         ttl: 300,
-        annotation_code: {
-          text: annotationText,
-          style: "font-size:16px; color:white; text-shadow: 0 0 3px #000; opacity:0.22;",
-          movable: true,
-        },
+        annotate: JSON.stringify([
+          {
+            type: "rtext",
+            text: "Licensed to {ip} · {date.h:i:s A}",
+            alpha: "0.25",
+            color: "0xFFFFFF",
+            size: "16",
+            interval: "5000",
+          },
+        ]),
       }),
     });
 
