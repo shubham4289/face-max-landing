@@ -1,11 +1,20 @@
-import { cookies } from 'next/headers';
-type Sess = { userId: string, name: string, email: string };
-const COOKIE = 'fm_session';
-export function setSession(sess: Sess) {
-  cookies().set(COOKIE, JSON.stringify(sess), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60*60*24*30 });
+// app/lib/cookies.ts
+import { cookies } from "next/headers";
+
+export type Session = {
+  userId: string;
+  name: string;
+  email: string;
+};
+
+export function getSession(): Session | null {
+  const raw = cookies().get("session")?.value;
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as Session; // matches setSession({ userId, name, email })
+  } catch {
+    return null;
+  }
 }
-export function getSession(): Sess | null {
-  const c = cookies().get(COOKIE)?.value; if (!c) return null;
-  try { return JSON.parse(c); } catch { return null; }
-}
-export function clearSession() { cookies().delete(COOKIE); }
+
+// (you already have setSession in this file, keep it as-is)
