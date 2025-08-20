@@ -207,19 +207,21 @@ export default function Page() {
 
       {/* VdoCipher Player */}
       <div className="flex justify-center py-8">
-        <iframe
-          id="vdoplayer"
-          width="720"
-          height="405"
-          allow="encrypted-media"
-          allowFullScreen
-          style={{ border: 0 }}
-        ></iframe>
+        <div id="vdo-wrap">
+          <iframe
+            id="vdoplayer"
+            width="720"
+            height="405"
+            allow="encrypted-media; fullscreen; picture-in-picture 'none'"
+            allowFullScreen
+            style={{ border: 0 }}
+          ></iframe>
+        </div>
       </div>
      <script
-  dangerouslySetInnerHTML={{
-    __html: `
-      (function () {
+      dangerouslySetInnerHTML={{
+        __html: `
+          (function () {
         const VIDEO_ID = "056ef4706ec54b21baa09deccbb710f7";
 
         // 1) Get viewer info from URL (?name=...&email=...) or use defaults for testing
@@ -241,10 +243,26 @@ export default function Page() {
             iframe.src = src;
           })
           .catch(() => alert('Failed to load secure video'));
-      })();
+          })();
+        `,
+      }}
+    />
+
+     <script
+       dangerouslySetInnerHTML={{
+         __html: `
+      // block right-click inside the player area
+      document.addEventListener('DOMContentLoaded', () => {
+        const wrap = document.getElementById('vdo-wrap');
+        if (wrap) {
+          wrap.addEventListener('contextmenu', (e) => e.preventDefault());
+          // optional: block double-click fullscreen toggle on wrapper
+          wrap.addEventListener('dblclick', (e) => e.preventDefault());
+        }
+      });
     `,
-  }}
-/>
+       }}
+     />
 
 
       {/* Hero */}

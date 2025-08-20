@@ -65,7 +65,7 @@ async function handler(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ttl: 300,
+        ttl: 120,
         annotate: JSON.stringify(wmItems),
       }),
     });
