@@ -1,6 +1,6 @@
 // app/api/test-email/route.ts
 import { NextResponse } from 'next/server';
-import { sendEmail } from '../../lib/email'; // <-- relative path
+import { sendEmail } from '../../lib/email';
 
 export async function GET(req: Request) {
   try {
