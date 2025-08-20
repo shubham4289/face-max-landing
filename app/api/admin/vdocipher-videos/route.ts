@@ -1,42 +1,36 @@
-import { NextResponse } from "next/server";
-import { getSession } from "@/app/lib/cookies";
-import { isAdmin } from "@/app/lib/auth";
+import { NextResponse } from 'next/server';
+import { assertAdmin } from '@/app/lib/admin';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-  const sess = getSession();
-  if (!sess?.email || !isAdmin(sess.email)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    assertAdmin();
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const apiSecret = process.env.VDOCIPHER_API_SECRET;
   if (!apiSecret) {
-    return NextResponse.json(
-      { error: "VDOCIPHER_API_SECRET missing" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'VDOCIPHER_API_SECRET missing' }, { status: 500 });
   }
 
-  // optional pagination (?page=1&limit=20) – if you don’t pass them, you’ll get the default first page
   const url = new URL(req.url);
-  const page = url.searchParams.get("page") || "";
-  const limit = url.searchParams.get("limit") || "";
+  const page = url.searchParams.get('page') || '';
+  const limit = url.searchParams.get('limit') || '';
 
   const qs = new URLSearchParams();
-  if (page) qs.set("page", page);
-  if (limit) qs.set("limit", limit);
+  if (page) qs.set('page', page);
+  if (limit) qs.set('limit', limit);
 
-  const endpoint = `https://dev.vdocipher.com/api/videos${
-    qs.toString() ? `?${qs.toString()}` : ""
-  }`;
+  const endpoint = `https://dev.vdocipher.com/api/videos${qs.toString() ? `?${qs.toString()}` : ''}`;
 
   const resp = await fetch(endpoint, {
     headers: {
-      Accept: "application/json",
+      Accept: 'application/json',
       Authorization: `Apisecret ${apiSecret}`,
     },
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!resp.ok) {
@@ -45,8 +39,6 @@ export async function GET(req: Request) {
   }
 
   const raw = await resp.json();
-
-  // Try to be flexible with the response shape
   const rows: any[] = Array.isArray(raw?.rows)
     ? raw.rows
     : Array.isArray(raw?.videos)
@@ -57,7 +49,7 @@ export async function GET(req: Request) {
 
   const items = rows.map((r: any) => ({
     id: r.id || r._id || r.videoId,
-    title: r.title || r.name || "Untitled",
+    title: r.title || r.name || 'Untitled',
     duration: r.duration || r.length || null,
     createdAt: r.createdAt || r.created_time || r.created || null,
   }));

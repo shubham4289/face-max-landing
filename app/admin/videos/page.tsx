@@ -1,13 +1,13 @@
-import { notFound } from "next/navigation";
-import { getSession } from "@/app/lib/cookies";
-import { isAdmin } from "@/app/lib/auth";
-import AdminVideoList from "./videolist";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export const dynamic = "force-dynamic";
+import { isAdmin } from '@/app/lib/admin';
+import AdminVideoList from './videolist';
 
 export default async function AdminVideosPage() {
-  const sess = getSession();
-  if (!sess?.email || !isAdmin(sess.email)) notFound();
+  if (!isAdmin()) {
+    return <div style={{ padding: 24 }}>Unauthorized</div>;
+  }
 
   return (
     <div className="mx-auto max-w-[1100px] px-6 py-8">

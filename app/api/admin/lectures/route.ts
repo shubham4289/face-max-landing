@@ -1,29 +1,30 @@
 // app/api/admin/lectures/route.ts
-import { NextResponse } from "next/server";
-import { sql } from "@/app/lib/db";
-import { ensureTables } from "@/app/lib/bootstrap";
-import { requireAdminEmail } from "@/app/lib/admin";
-import { randomId } from "@/app/lib/crypto";
+import { NextResponse } from 'next/server';
+import { sql } from '@/app/lib/db';
+import { ensureTables } from '@/app/lib/bootstrap';
+import { assertAdmin } from '@/app/lib/admin';
+import { randomId } from '@/app/lib/crypto';
 
 type Body = {
-  id?: string;            // if given, we update; else create
+  id?: string; // if given, we update; else create
   sectionId: string;
   title: string;
   orderIndex?: number;
-  videoId?: string;       // VdoCipher id
+  videoId?: string;
   durationMin?: number;
 };
 
 export async function POST(req: Request) {
   try {
-    requireAdminEmail();
+    assertAdmin();
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id, sectionId, title, orderIndex = 0, videoId = null, durationMin = 0 } = await req.json() as Body;
+  const { id, sectionId, title, orderIndex = 0, videoId = null, durationMin = 0 } =
+    (await req.json()) as Body;
   if (!sectionId || !title) {
-    return NextResponse.json({ error: "sectionId and title required" }, { status: 400 });
+    return NextResponse.json({ error: 'sectionId and title required' }, { status: 400 });
   }
 
   await ensureTables();
@@ -51,9 +52,9 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    requireAdminEmail();
+    assertAdmin();
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const rows = await sql`
     SELECT l.id, l.section_id, l.title, l.order_index, l.video_id, l.duration_min
