@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   await ensureTables();
   const { email, password } = await req.json();
   if (!email || !password) return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
-  const rows = await sql<{id:string,name:string,password_hash:string}[]>`SELECT id, name, password_hash FROM users WHERE email=${email.toLowerCase()} LIMIT 1;`;
+  const rows = (await sql`SELECT id, name, password_hash FROM users WHERE email=${email.toLowerCase()} LIMIT 1;`) as { id: string; name: string; password_hash: string }[];
   if (rows.length === 0) return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   const user = rows[0];
   const ok = await verifyPassword(password, user.password_hash);
