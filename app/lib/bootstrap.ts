@@ -2,10 +2,9 @@
 import { sql } from "../lib/db";
 
 /**
- * Creates the minimal schema required by the app.
- * - Keeps your existing users & otps (unchanged)
- * - Adds sections & lectures used by the /admin/course builder
- *   (TEXT ids so we can use any string id; foreign key from lectures → sections)
+ * Creates/updates the schema used by the app.
+ * - Keeps users & otps (as you had them)
+ * - Adds sections & lectures for the admin course builder
  */
 export async function ensureTables() {
   // --- existing tables ---
@@ -31,7 +30,7 @@ export async function ensureTables() {
     );
   `;
 
-  -- Add a small index that speeds up “latest login OTPs for a user” lookups
+  // Small index to speed up "latest login OTPs for a user"
   await sql`
     CREATE INDEX IF NOT EXISTS idx_otps_user_purpose_created
       ON otps (user_id, purpose, created_at DESC);
@@ -53,7 +52,7 @@ export async function ensureTables() {
       section_id   text NOT NULL REFERENCES sections(id) ON DELETE CASCADE,
       title        text NOT NULL,
       order_index  int  NOT NULL DEFAULT 0,
-      video_id     text,                -- VdoCipher videoId (nullable until you paste one)
+      video_id     text,
       duration_min int  DEFAULT 0,
       created_at   timestamptz DEFAULT now()
     );
