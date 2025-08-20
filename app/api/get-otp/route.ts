@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+function sanitize(input?: string) {
+  if (!input) return undefined;
+  return input.trim().slice(0, 64).replace(/[<>"']/g, "");
+}
+
 async function handler(request: Request) {
   let videoId: string | undefined;
   let viewerName: string | undefined;
@@ -35,6 +40,23 @@ async function handler(request: Request) {
     return NextResponse.json({ error: "VDOCIPHER_API_SECRET not set" }, { status: 500, headers });
   }
 
+  viewerName = sanitize(viewerName);
+  viewerEmail = sanitize(viewerEmail);
+
+  const safeName = viewerName || "Student";
+  const safeEmail = viewerEmail || "thefacemax.com";
+
+  const wmItems = [
+    {
+      type: "rtext",
+      text: ` Licensed to ${safeName} · ${safeEmail} · {ip} · {date.h:i:s A} `,
+      alpha: "0.22",
+      color: "0xFFFFFF",
+      size: "16",
+      interval: "5000",
+    },
+  ];
+
   try {
     const apiRes = await fetch(`https://dev.vdocipher.com/api/videos/${videoId}/otp`, {
       method: "POST",
@@ -44,16 +66,7 @@ async function handler(request: Request) {
       },
       body: JSON.stringify({
         ttl: 300,
-        annotate: JSON.stringify([
-          {
-            type: "rtext",
-            text: "Licensed to {ip} · {date.h:i:s A}",
-            alpha: "0.25",
-            color: "0xFFFFFF",
-            size: "16",
-            interval: "5000",
-          },
-        ]),
+        annotate: JSON.stringify(wmItems),
       }),
     });
 
