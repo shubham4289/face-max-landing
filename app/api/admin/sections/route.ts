@@ -1,16 +1,18 @@
 // app/api/admin/sections/route.ts
-import { NextResponse } from "next/server";
-import { sql } from "@/app/lib/db";
-import { ensureTables } from "@/app/lib/bootstrap";
-import { requireAdminEmail } from "@/app/lib/admin";
-import { randomId } from "@/app/lib/crypto";
+import { NextResponse } from 'next/server';
+import { assertAdmin } from '@/app/lib/admin';
+// ...other imports...
 
 export async function POST(req: Request) {
   try {
-    requireAdminEmail();
+    assertAdmin();
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  // ...create section...
+  return NextResponse.json({ ok: true });
+}
 
   const { title, orderIndex = 0 } = await req.json() as {
     title: string;
