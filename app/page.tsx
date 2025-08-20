@@ -192,6 +192,9 @@ export default function Page() {
             <a href="#curriculum" className="hover:opacity-80">Curriculum</a>
             <a href="#pricing" className="hover:opacity-80">Pricing</a>
             <a href="#faq" className="hover:opacity-80">FAQ</a>
+              <a href="/register" className="hover:opacity-80">Register</a>
+              <a href="/login" className="hover:opacity-80">Login</a>
+              <a href="/course" className="hover:opacity-80">Go to Course</a>
             <a href="#enroll" className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 bg-slate-900 text-white">
               Enroll <ArrowRight className="w-4 h-4" />
             </a>

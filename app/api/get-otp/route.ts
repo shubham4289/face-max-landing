@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getSession } from '@/app/lib/cookies';
 
 function sanitize(input?: string) {
   if (!input) return undefined;
@@ -26,6 +27,13 @@ async function handler(request: Request) {
     }
   }
 
+  if (!viewerName || !viewerEmail) {
+    const session = getSession(request);
+    if (session) {
+      if (!viewerName) viewerName = session.name;
+      if (!viewerEmail) viewerEmail = session.email;
+    }
+  }
   const headers = {
     "Cache-Control": "no-store",
     "Access-Control-Allow-Origin": new URL(request.url).origin,

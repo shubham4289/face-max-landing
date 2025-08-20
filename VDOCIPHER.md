@@ -33,3 +33,21 @@ await fetch("/api/get-otp", {
   body: JSON.stringify({ videoId: "VIDEO_ID", viewerName: name, viewerEmail: email })
 }).then(r => r.json()).then(({ otp, playbackInfo }) => { /* set iframe src as above */ });
 ```
+
+## Environment Variables
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- `APP_URL`
+- `VDOCIPHER_API_SECRET`
+
+## Auth Flows
+- Sign-up requires email verification via OTP sent to the user.
+- Login requires password then a second-factor OTP emailed to the user.
+- Forgot password triggers a reset OTP; resetting updates the password.
+- Sessions are stored in Postgres and issued as an HttpOnly `fm_session` cookie.
+- `/course` is protected by middleware that checks this cookie.
+
+## Watermark Personalization
+`/api/get-otp` personalizes the dynamic watermark using `viewerName` and `viewerEmail`.
+If these fields are not provided, the route pulls `name` and `email` from the `fm_session` cookie.
