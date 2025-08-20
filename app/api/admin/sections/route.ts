@@ -1,4 +1,7 @@
 // app/api/admin/sections/route.ts
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { NextResponse } from 'next/server';
 import { sql } from '@/app/lib/db';
 import { ensureTables } from '@/app/lib/bootstrap';
