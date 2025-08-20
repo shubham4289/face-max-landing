@@ -1,8 +1,16 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function OtpPage() {
+  return (
+    <Suspense>
+      <OtpForm />
+    </Suspense>
+  );
+}
+
+function OtpForm() {
   const search = useSearchParams();
   const email = search.get("email") || "";
   const [code, setCode] = useState("");
@@ -47,9 +55,7 @@ export default function OtpPage() {
         >
           Verify OTP
         </button>
-        {message && (
-          <p className="text-center text-sm">{message}</p>
-        )}
+        {message && <p className="text-center text-sm">{message}</p>}
       </form>
     </div>
   );
