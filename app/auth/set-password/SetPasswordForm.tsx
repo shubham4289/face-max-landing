@@ -31,6 +31,7 @@ export default function SetPasswordForm({ token }: SetPasswordFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
+      <input type="hidden" name="token" value={token} />
       <input
         type="password"
         required
