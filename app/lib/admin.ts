@@ -1,10 +1,7 @@
 // app/lib/admin.ts
 import { getSession } from "@/app/lib/cookies";
 
-/**
- * Throws if the current session email != ADMIN_EMAIL
- * Use inside server components or API routes (Node runtime).
- */
+/** New canonical guard */
 export function requireAdminEmail() {
   const admin = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
   if (!admin) {
@@ -17,4 +14,15 @@ export function requireAdminEmail() {
     err.status = 401;
     throw err;
   }
+}
+
+/** Back-compat: some files still import `assertAdmin` */
+export const assertAdmin = requireAdminEmail;
+
+/** Back-compat: some files still import `isAdmin` */
+export function isAdmin(): boolean {
+  const admin = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+  const s = getSession();
+  const current = (s?.email || "").toLowerCase().trim();
+  return !!admin && !!current && current === admin;
 }
