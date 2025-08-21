@@ -61,15 +61,12 @@ export async function ensureTables() {
   // --- purchases for course access ---
   await sql`
     CREATE TABLE IF NOT EXISTS purchases (
-      id         uuid PRIMARY KEY,
-      user_id    uuid NOT NULL,
+      user_id    text NOT NULL,
       course_id  text NOT NULL,
-      created_at timestamptz DEFAULT now()
+      created_at timestamptz DEFAULT now(),
+      PRIMARY KEY (user_id, course_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
-  `;
-  await sql`
-    CREATE INDEX IF NOT EXISTS idx_purchases_user_course
-      ON purchases(user_id, course_id);
   `;
 
   await sql`CREATE INDEX IF NOT EXISTS idx_sections_order ON sections(order_index, created_at);`;
