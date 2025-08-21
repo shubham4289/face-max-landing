@@ -1,4 +1,7 @@
 // app/api/test-email/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../lib/email'; // <-- relative path
 
