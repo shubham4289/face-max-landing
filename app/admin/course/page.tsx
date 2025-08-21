@@ -173,6 +173,16 @@ export default async function AdminCoursePage() {
     </main>
   );
 }
+async function createSection() {
+  await fetch("/api/admin/sections", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title,
+      orderIndex: parseInt(orderIndex, 10),
+    }),
+  });
+}
 
 async function getData() {
   const sections = (await sql`
