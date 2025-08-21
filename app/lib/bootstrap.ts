@@ -75,9 +75,12 @@ export async function ensureTables() {
       user_id     text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       token_hash  text NOT NULL,
       expires_at  timestamptz NOT NULL,
-      consumed_at timestamptz
+      consumed_at timestamptz,
+      created_at  timestamptz DEFAULT now()
     );
   `;
+
+  await sql`ALTER TABLE password_resets ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();`;
 
   await sql`CREATE INDEX IF NOT EXISTS idx_sections_order ON sections(order_index, created_at);`;
   await sql`CREATE INDEX IF NOT EXISTS idx_lectures_section_order ON lectures(section_id, order_index, created_at);`;
