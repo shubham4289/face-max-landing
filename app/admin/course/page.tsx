@@ -6,6 +6,7 @@ import { ensureTables } from '@/app/lib/bootstrap';
 import { sql } from '@/app/lib/db';
 import CreateSectionForm from './CreateSectionForm';
 import CreateLectureForm from './CreateLectureForm';
+import InviteStudentForm from './InviteStudentForm';
 
 export default async function AdminCoursePage() {
   if (!isAdmin()) {
@@ -32,6 +33,14 @@ export default async function AdminCoursePage() {
           <CreateLectureForm sections={sections} />
         </section>
       </div>
+
+      <div style={{ height: 24 }} />
+
+      {/* Invite Student */}
+      <section style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16, maxWidth: 400 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Invite Student</h2>
+        <InviteStudentForm />
+      </section>
 
       <div style={{ height: 28 }} />
       <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Current Structure</h2>
