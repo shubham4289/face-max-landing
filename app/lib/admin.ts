@@ -1,20 +1,20 @@
-import 'server-only';
-import { getSession } from '@/app/lib/cookies';
+// app/lib/admin.ts
+import { getSession } from "@/app/lib/cookies";
 
-/** Returns true if the current session email matches ADMIN_EMAIL (case-insensitive). */
-export function isAdmin(): boolean {
-  const admin = (process.env.ADMIN_EMAIL ?? '').toLowerCase().trim();
-  if (!admin) return false;
-  const s = getSession();
-  return !!s?.email && s.email.toLowerCase() === admin;
-}
-
-/** Throws 'UNAUTHORIZED' if current session is not admin. */
-export function assertAdmin() {
-  if (!isAdmin()) throw new Error('UNAUTHORIZED');
-}
-
-/** SHIM for older code that still imports this name. */
+/**
+ * Throws if the current session email != ADMIN_EMAIL
+ * Use inside server components or API routes (Node runtime).
+ */
 export function requireAdminEmail() {
-  assertAdmin();
+  const admin = (process.env.ADMIN_EMAIL || "").toLowerCase().trim();
+  if (!admin) {
+    throw new Error("ADMIN_EMAIL not configured");
+  }
+  const s = getSession();
+  const current = (s?.email || "").toLowerCase().trim();
+  if (!current || current !== admin) {
+    const err: any = new Error("Unauthorized");
+    err.status = 401;
+    throw err;
+  }
 }
