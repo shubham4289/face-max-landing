@@ -65,6 +65,9 @@ export default function LoginPage() {
             Forgot password?
           </Link>
         </div>
+        <p className="text-center text-sm text-slate-600">
+          If you purchased the course, check your email for access.
+        </p>
       </form>
     </div>
   );

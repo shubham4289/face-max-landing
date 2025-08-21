@@ -58,6 +58,20 @@ export async function ensureTables() {
     );
   `;
 
+  // --- purchases for course access ---
+  await sql`
+    CREATE TABLE IF NOT EXISTS purchases (
+      id         uuid PRIMARY KEY,
+      user_id    uuid NOT NULL,
+      course_id  text NOT NULL,
+      created_at timestamptz DEFAULT now()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_purchases_user_course
+      ON purchases(user_id, course_id);
+  `;
+
   await sql`CREATE INDEX IF NOT EXISTS idx_sections_order ON sections(order_index, created_at);`;
   await sql`CREATE INDEX IF NOT EXISTS idx_lectures_section_order ON lectures(section_id, order_index, created_at);`;
 }
