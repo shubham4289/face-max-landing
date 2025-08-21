@@ -2,7 +2,6 @@ export const metadata = {
   title: "Face Max Academy — Implant Course",
   description: "Implant Dentistry, simplified for surgeons.",
   manifest: "/site.webmanifest?v=5",
-  themeColor: "#0f172a",
   icons: {
     icon: [
       { url: "/icons/face-max-icon.png?v=5", sizes: "32x32", type: "image/png" },
@@ -19,6 +18,8 @@ export const metadata = {
     // shortcut: ["/favicon.ico?v=5"]
   },
 };
+
+export const viewport = { themeColor: "#0f172a" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
