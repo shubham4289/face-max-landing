@@ -5,9 +5,8 @@ export const revalidate = 0;
 import { getCourseData } from '@/app/lib/course-data';
 import { getSession } from '@/app/lib/cookies';
 import { userHasPurchase } from '@/app/lib/access';
+import { COURSE_ID } from '@/app/lib/course-ids';
 import CourseClient from './ui';
-
-const COURSE_ID = 'face-max-course';
 
 export default async function CoursePage() {
   const session = getSession();
