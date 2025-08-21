@@ -1,0 +1,218 @@
+process.env.POSTGRES_URL = 'postgres://user:pass@localhost/db';
+
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json: (body: any, init?: ResponseInit) =>
+      new Response(JSON.stringify(body), { status: init?.status || 200 }),
+  },
+}));
+
+jest.mock('server-only', () => ({}), { virtual: true });
+
+jest.mock('../app/lib/db', () => ({
+  sql: jest.fn(),
+}));
+
+jest.mock('../app/lib/bootstrap', () => ({
+  ensureTables: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock('../app/lib/email', () => ({
+  sendEmail: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock('../app/lib/cookies', () => ({
+  getSession: jest.fn(),
+  setSession: jest.fn(),
+}));
+
+jest.mock('../app/lib/access', () => ({
+  userHasPurchase: jest.fn(),
+}));
+
+jest.mock('../app/lib/course-data', () => ({
+  getCourseData: jest.fn(),
+}));
+
+jest.mock('../app/lib/admin', () => ({
+  requireAdminEmail: jest.fn(),
+}));
+
+jest.mock('../app/lib/crypto', () => ({
+  randomId: () => 'new-id',
+  hashToken: () => 'hash',
+  hashPassword: async () => 'passhash',
+  verifyPassword: async () => true,
+}));
+
+import { renderToStaticMarkup } from 'react-dom/server';
+import crypto from 'crypto';
+
+import CoursePage from '../app/course/page';
+import { POST as StripeWebhook } from '../app/api/webhooks/stripe/route';
+import { POST as RazorWebhook } from '../app/api/webhooks/razorpay/route';
+import { POST as AdminInvite } from '../app/api/admin/invite/route';
+import { POST as ForgotPassword } from '../app/api/auth/forgot/route';
+
+const { sql } = require('../app/lib/db');
+const { getSession } = require('../app/lib/cookies');
+const { userHasPurchase } = require('../app/lib/access');
+const { getCourseData } = require('../app/lib/course-data');
+const { sendEmail } = require('../app/lib/email');
+const { requireAdminEmail } = require('../app/lib/admin');
+
+describe('/course page access', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('logged out prompts login', async () => {
+    getSession.mockReturnValue(null);
+    const el = await CoursePage();
+    const html = renderToStaticMarkup(el);
+    expect(html).toContain('Please log in');
+  });
+
+  test('non-buyer sees paywall', async () => {
+    getSession.mockReturnValue({ userId: 'u1' });
+    userHasPurchase.mockResolvedValue(false);
+    const el = await CoursePage();
+    const html = renderToStaticMarkup(el);
+    expect(html).toContain('You do not have access');
+  });
+
+  test('buyer sees course', async () => {
+    getSession.mockReturnValue({ userId: 'u1' });
+    userHasPurchase.mockResolvedValue(true);
+    getCourseData.mockResolvedValue([]);
+    const el = await CoursePage();
+    const html = renderToStaticMarkup(el);
+    expect(html).toContain('Course content');
+  });
+});
+
+describe('webhook handlers', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('stripe webhook creates user, purchase, sends email', async () => {
+    process.env.STRIPE_WEBHOOK_SECRET = 'sec';
+    sql
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    const event = {
+      type: 'checkout.session.completed',
+      data: { object: { customer_details: { email: 'a@example.com', name: 'Alice' } } },
+    };
+    const raw = JSON.stringify(event);
+    const ts = '12345';
+    const v1 = crypto.createHmac('sha256', 'sec').update(`${ts}.${raw}`).digest('hex');
+    const sig = `t=${ts},v1=${v1}`;
+    const req = new Request('http://localhost/api/webhooks/stripe', {
+      method: 'POST',
+      headers: { 'stripe-signature': sig },
+      body: raw,
+    });
+    const res = await StripeWebhook(req);
+    expect(res.status).toBe(200);
+    const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
+    expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  test('razorpay webhook creates user, purchase, sends email', async () => {
+    process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
+    sql
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    const event = {
+      event: 'payment.captured',
+      payload: {
+        payment: { entity: { email: 'b@example.com', notes: { name: 'Bob' } } },
+        order: { entity: {} },
+      },
+    };
+    const raw = JSON.stringify(event);
+    const sig = crypto.createHmac('sha256', 'rzp').update(raw).digest('hex');
+    const req = new Request('http://localhost/api/webhooks/razorpay', {
+      method: 'POST',
+      headers: { 'x-razorpay-signature': sig },
+      body: raw,
+    });
+    const res = await RazorWebhook(req);
+    expect(res.status).toBe(200);
+    const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
+    expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('admin invite', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('creates user and purchase and sends email', async () => {
+    requireAdminEmail.mockReturnValue(undefined);
+    sql
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    const req = new Request('http://localhost/api/admin/invite', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'c@example.com', name: 'Carol' }),
+    });
+    const res = await AdminInvite(req);
+    expect(res.status).toBe(200);
+    const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
+    expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('forgot password', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('sends email only for buyers', async () => {
+    sql
+      .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce([{ count: 0 }])
+      .mockResolvedValueOnce(undefined);
+    userHasPurchase.mockResolvedValue(true);
+    const req = new Request('http://localhost/api/auth/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'buyer@example.com' }),
+    });
+    const res = await ForgotPassword(req);
+    expect(res.status).toBe(200);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  test('non-buyers do not receive email', async () => {
+    sql
+      .mockResolvedValueOnce([{ id: 'u2' }])
+      .mockResolvedValueOnce([{ count: 0 }]);
+    userHasPurchase.mockResolvedValue(false);
+    const req = new Request('http://localhost/api/auth/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'nobuyer@example.com' }),
+    });
+    const res = await ForgotPassword(req);
+    expect(res.status).toBe(200);
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+});

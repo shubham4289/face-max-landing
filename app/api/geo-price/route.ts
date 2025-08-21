@@ -1,4 +1,6 @@
 // app/api/geo-price/route.ts
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from "next/server";
 
 type AbstractResp = {
