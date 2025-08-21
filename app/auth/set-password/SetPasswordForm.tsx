@@ -14,20 +14,19 @@ export default function SetPasswordForm({ token }: SetPasswordFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
+
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
       return;
     }
+
     const res = await fetch("/api/auth/set-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),
     });
-    if (res.ok) {
-      setMessage("Password updated");
-    } else {
-      setMessage("Error");
-    }
+
+    setMessage(res.ok ? "Password updated" : "Error");
   }
 
   return (
@@ -58,3 +57,4 @@ export default function SetPasswordForm({ token }: SetPasswordFormProps) {
     </form>
   );
 }
+
