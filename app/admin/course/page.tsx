@@ -4,7 +4,7 @@ export const revalidate = 0;
 import { isAdmin } from '@/app/lib/admin';
 import { ensureTables } from '@/app/lib/bootstrap';
 import { sql } from '@/app/lib/db';
-import { revalidatePath } from 'next/cache';
+import CreateSectionForm from './CreateSectionForm';
 
 export default async function AdminCoursePage() {
   if (!isAdmin()) {
@@ -22,45 +22,7 @@ export default async function AdminCoursePage() {
         {/* Create Section */}
         <section style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Create Section</h2>
-          <form
-            action={async (formData) => {
-              'use server';
-              const sectionTitle = String(formData.get('title') || '').trim();
-              const orderIndex = String(formData.get('orderIndex') || '0');
-              await fetch('/api/admin/sections', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  title: sectionTitle,
-                  orderIndex: Number(orderIndex),
-                }),
-              });
-              revalidatePath('/admin/course');
-            }}
-          >
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Title</label>
-            <input
-              name="title"
-              required
-              placeholder="e.g. Basic Anatomy for Implantology"
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-            <div style={{ height: 12 }} />
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Order Index</label>
-            <input
-              type="number"
-              name="orderIndex"
-              defaultValue={sections.length}
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-            <div style={{ height: 12 }} />
-            <button
-              type="submit"
-              style={{ background: '#111827', color: '#fff', borderRadius: 8, padding: '10px 14px', fontWeight: 600 }}
-            >
-              Create Section
-            </button>
-          </form>
+          <CreateSectionForm nextIndex={sections.length} />
         </section>
 
         {/* Add/Update Lecture */}
