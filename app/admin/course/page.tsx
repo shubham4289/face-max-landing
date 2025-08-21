@@ -4,6 +4,7 @@ export const revalidate = 0;
 import { isAdmin } from '@/app/lib/admin';
 import { ensureTables } from '@/app/lib/bootstrap';
 import { sql } from '@/app/lib/db';
+import { revalidatePath } from 'next/cache';
 
 export default async function AdminCoursePage() {
   if (!isAdmin()) {
@@ -24,14 +25,17 @@ export default async function AdminCoursePage() {
           <form
             action={async (formData) => {
               'use server';
-              const title = String(formData.get('title') || '').trim();
-              const orderIndex = Number(formData.get('orderIndex') || 0);
-              await fetch(`${process.env.APP_URL || ''}/api/admin/sections`, {
+              const sectionTitle = String(formData.get('title') || '').trim();
+              const orderIndex = String(formData.get('orderIndex') || '0');
+              await fetch('/api/admin/sections', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, orderIndex }),
-                cache: 'no-store',
+                body: JSON.stringify({
+                  title: sectionTitle,
+                  orderIndex: Number(orderIndex),
+                }),
               });
+              revalidatePath('/admin/course');
             }}
           >
             <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Title</label>
@@ -173,17 +177,6 @@ export default async function AdminCoursePage() {
     </main>
   );
 }
-async function createSection() {
-  await fetch("/api/admin/sections", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      title,
-      orderIndex: parseInt(orderIndex, 10),
-    }),
-  });
-}
-
 async function getData() {
   const sections = (await sql`
     SELECT id, title, order_index
