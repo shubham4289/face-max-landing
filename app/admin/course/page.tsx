@@ -5,6 +5,7 @@ import { isAdmin } from '@/app/lib/admin';
 import { ensureTables } from '@/app/lib/bootstrap';
 import { sql } from '@/app/lib/db';
 import CreateSectionForm from './CreateSectionForm';
+import CreateLectureForm from './CreateLectureForm';
 
 export default async function AdminCoursePage() {
   if (!isAdmin()) {
@@ -28,85 +29,7 @@ export default async function AdminCoursePage() {
         {/* Add/Update Lecture */}
         <section style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Add / Update Lecture</h2>
-          <form
-            action={async (formData) => {
-              'use server';
-              const payload = {
-                id: String(formData.get('id') || '') || undefined,
-                sectionId: String(formData.get('sectionId') || ''),
-                title: String(formData.get('title') || ''),
-                orderIndex: Number(formData.get('orderIndex') || 0),
-                videoId: String(formData.get('videoId') || '') || undefined,
-                durationMin: Number(formData.get('durationMin') || 0),
-              };
-              await fetch(`${process.env.APP_URL || ''}/api/admin/lectures`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                cache: 'no-store',
-              });
-            }}
-          >
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Section</label>
-            <select
-              name="sectionId"
-              required
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            >
-              <option value="">Select section…</option>
-              {sections.map((s: any) => (
-                <option key={s.id} value={s.id}>
-                  {s.order_index}. {s.title}
-                </option>
-              ))}
-            </select>
-
-            <div style={{ height: 12 }} />
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Lecture Title</label>
-            <input
-              name="title"
-              required
-              placeholder="e.g. What is a dental implant?"
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-            <div style={{ height: 12 }} />
-
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Order Index</label>
-            <input
-              type="number"
-              name="orderIndex"
-              defaultValue={0}
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-            <div style={{ height: 12 }} />
-
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>VdoCipher videoId</label>
-            <input
-              name="videoId"
-              placeholder="e.g. 056ef4706ec54b21baa09deccbb710f7"
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-            <div style={{ height: 12 }} />
-
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Duration (min) — optional</label>
-            <input
-              type="number"
-              name="durationMin"
-              defaultValue={0}
-              style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '10px 12px' }}
-            />
-
-            {/* Hidden for updates (paste an existing lecture id if you are editing) */}
-            <input type="hidden" name="id" />
-
-            <div style={{ height: 12 }} />
-            <button
-              type="submit"
-              style={{ background: '#111827', color: '#fff', borderRadius: 8, padding: '10px 14px', fontWeight: 600 }}
-            >
-              Save Lecture
-            </button>
-          </form>
+          <CreateLectureForm sections={sections} />
         </section>
       </div>
 
