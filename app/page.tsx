@@ -18,7 +18,7 @@ import TrailerModal from "./components/TrailerModal";
 import GeoPrice from "./components/GeoPrice";
 
 /* ===== Clean, balanced icons (kept for future use if needed) ===== */
-const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
+const _IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" {...props}>
     <rect x="7" y="3" width="10" height="4" rx="2" />
     <path d="M9 7h6c0 5.5-2 8.5-3 13-.3 1.2-1.7 1.2-2 0-1-4.5-3-7.5-3-13h2z" />
@@ -26,7 +26,7 @@ const IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
+const _IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" {...props}>
     <path d="M3.5 17.5 L12 9" />
     <path d="M13 9.5 L21 17 L18 20 L10 12" />
@@ -34,7 +34,7 @@ const IconScalpel = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
+const _IconAlertTooth = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" {...props}>
     <path d="M8.5 4.2c2-1.4 5-1.4 7 0 1.9 1.4 2.1 4.2.6 5.9-.9 1-1.4 2.6-1.8 4-.3 1-1.7 1-2 0-.4-1.4-.9-3-1.8-4C6.9 8.4 6.6 5.6 8.5 4.2Z" />
     <path d="M3.2 10.4l2-3.5c.2-.3.6-.3.8 0l2 3.5c.2.3 0 .7-.4.7H3.6c-.4 0-.6-.4-.4-.7Z" />
