@@ -1,4 +1,11 @@
 // app/course/page.tsx
+// Theme tokens (from landing page)
+// bg: bg-gradient-to-b from-white to-slate-50
+// surface: bg-white
+// border: border-slate-200
+// text: text-slate-900
+// muted: text-slate-600
+// accent: text-amber-400
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -30,16 +37,16 @@ export default async function CoursePage() {
   const totalLectures = data.reduce((a, s) => a + s.lectures.length, 0);
 
   return (
-    <div className="min-h-screen bg-white text-[#111]">
-      <div className="border-b border-neutral-200">
-        <div className="mx-auto max-w-[1200px] px-4 py-3 flex items-center gap-3">
-          <div className="font-semibold">The Face Max</div>
-          <div className="text-neutral-400">|</div>
-          <div className="text-sm text-neutral-600">Dental Implant Mastery</div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
+      <div className="border-b border-slate-200/60 bg-white/70">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-3">
+          <div className="font-semibold">Face Max Academy</div>
+          <div className="text-slate-400">|</div>
+          <div className="text-sm text-slate-600">Dental Implant Mastery</div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1200px] px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-24">
         <CourseClient data={data} totalLectures={totalLectures} />
       </div>
     </div>
