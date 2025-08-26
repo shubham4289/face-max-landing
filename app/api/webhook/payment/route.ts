@@ -9,6 +9,7 @@ import { sendMail } from '@/app/lib/email';
 import { COURSE_ID } from '@/app/lib/course-ids';
 
 export async function POST(req: Request) {
+  console.info('[webhook] received');
   const raw = await req.text();
   const sig = req.headers.get('x-razorpay-signature') ?? '';
   const expected = crypto
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   }
 
   const evt = JSON.parse(raw);
+  console.info('[webhook] verified', { event: evt.event });
   if (evt.event !== 'payment.captured') {
     return NextResponse.json({ ok: true });
   }
@@ -66,6 +68,9 @@ export async function POST(req: Request) {
         RETURNING 1;
       `) as unknown[] | undefined;
       newPurchase = Array.isArray(res) && res.length > 0;
+      if (!newPurchase) {
+        console.info('[webhook] duplicate, skipping', { payment_id: paymentId });
+      }
     }
 
     await sql`
@@ -89,5 +94,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 
+  console.info('[webhook] processed', { payment_id: paymentId });
   return NextResponse.json({ ok: true }, { status: 200 });
 }
