@@ -89,8 +89,7 @@ export const ensureTables: Promise<void> = (async () => {
       amount_cents INT NOT NULL,
       currency TEXT NOT NULL,
       raw JSONB NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      UNIQUE(provider, provider_payment_id)
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
   await sql`ALTER TABLE payments ALTER COLUMN id TYPE UUID USING id::uuid;`;
@@ -117,12 +116,40 @@ export const ensureTables: Promise<void> = (async () => {
   `;
   await sql`
     DO $$
+    DECLARE
+      existing_constraint TEXT;
     BEGIN
-      IF NOT EXISTS (
+      -- Drop standalone index if it exists without a matching constraint
+      IF EXISTS (
+        SELECT 1 FROM pg_class WHERE relname = 'payments_provider_payment_id_key' AND relkind = 'i'
+      ) AND NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'payments_provider_payment_id_key'
       ) THEN
+        EXECUTE 'DROP INDEX IF EXISTS payments_provider_payment_id_key';
+      END IF;
+
+      -- If the constraint already exists, skip creation
+      IF EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'payments_provider_payment_id_key'
+      ) THEN
+        RETURN;
+      END IF;
+
+      -- Rename existing composite constraint or create a new one
+      SELECT conname INTO existing_constraint
+      FROM pg_constraint
+      WHERE conrelid = 'payments'::regclass
+        AND contype = 'u'
+        AND conkey = ARRAY[
+          (SELECT attnum FROM pg_attribute WHERE attrelid = 'payments'::regclass AND attname = 'provider'),
+          (SELECT attnum FROM pg_attribute WHERE attrelid = 'payments'::regclass AND attname = 'provider_payment_id')
+        ];
+
+      IF existing_constraint IS NOT NULL THEN
+        EXECUTE format('ALTER TABLE payments RENAME CONSTRAINT %I TO payments_provider_payment_id_key', existing_constraint);
+      ELSE
         ALTER TABLE payments
-          ADD CONSTRAINT payments_provider_payment_id_key UNIQUE (provider_payment_id);
+          ADD CONSTRAINT payments_provider_payment_id_key UNIQUE (provider, provider_payment_id);
       END IF;
     END $$;
   `;
