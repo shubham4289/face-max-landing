@@ -164,6 +164,39 @@ describe('webhook handlers', () => {
     expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
     expect(sendMail).toHaveBeenCalledTimes(1);
   });
+
+  test('razorpay webhook uses fallback name when none provided', async () => {
+    process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
+    sql
+      .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    const event = {
+      event: 'payment.captured',
+      payload: {
+        payment: {
+          entity: {
+            id: 'pay_2',
+            email: 'noname@example.com',
+            amount: 1000,
+            currency: 'INR',
+          },
+        },
+      },
+    };
+    const raw = JSON.stringify(event);
+    const sig = crypto.createHmac('sha256', 'rzp').update(raw).digest('hex');
+    const req = new Request('http://localhost/api/webhook/payment', {
+      method: 'POST',
+      headers: { 'x-razorpay-signature': sig },
+      body: raw,
+    });
+    const res = await PaymentWebhook(req);
+    expect(res.status).toBe(200);
+    const nameParam = sql.mock.calls[0][3];
+    expect(nameParam).toBe('noname');
+  });
 });
 
 describe('admin invite', () => {
