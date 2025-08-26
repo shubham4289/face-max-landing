@@ -16,6 +16,7 @@ import ImplantHero from "./components/ImplantHero";
 import DealCountdown from "./components/DealCountdown";
 import TrailerModal from "./components/TrailerModal";
 import GeoPrice from "./components/GeoPrice";
+import BuyNow from "./marketing/BuyNow";
 
 /* ===== Clean, balanced icons (kept for future use if needed) ===== */
 const _IconImplant = (props: React.SVGProps<SVGSVGElement>) => (
@@ -449,6 +450,16 @@ export default function Page() {
                 <p className="mt-2 text-xs text-slate-500">Includes certificate • Lifetime updates • 50% off on all future courses</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Checkout */}
+      <section id="checkout" className="py-16 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center">Enroll now – $299</h2>
+          <div className="mt-8">
+            <BuyNow />
           </div>
         </div>
       </section>
