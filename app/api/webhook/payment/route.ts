@@ -7,23 +7,34 @@ import { ensureTables } from '@/app/lib/bootstrap';
 import {
   randomId,
   issuePasswordToken,
-  safeEqualHex,
 } from '@/app/lib/crypto';
 import { sendMail } from '@/app/lib/email';
 import { COURSE_ID } from '@/app/lib/course-ids';
 
 export async function POST(req: Request) {
-  const raw = await req.text();
+  const rawBody = await req.text();
   const signature = req.headers.get('x-razorpay-signature') || '';
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
-  const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex');
-  if (!signature || !safeEqualHex(expected, signature)) {
-    console.error('razorpay webhook invalid signature');
-    return NextResponse.json({ error: 'invalid signature' }, { status: 400 });
+  const expected = crypto
+    .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET!)
+    .update(rawBody, 'utf8')
+    .digest('hex');
+  let valid = false;
+  if (signature.length === expected.length) {
+    valid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected)
+    );
+  }
+  if (!valid) {
+    console.warn('razorpay webhook invalid signature');
+    return NextResponse.json(
+      { ok: false, error: 'invalid signature' },
+      { status: 400 }
+    );
   }
 
   try {
-    const event = JSON.parse(raw);
+    const event = JSON.parse(rawBody);
     if (event.event !== 'payment.captured') {
       return NextResponse.json({ ok: true });
     }
