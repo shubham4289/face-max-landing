@@ -61,3 +61,13 @@ Razorpay issues separate credentials for Test and Live modes. Ensure these envir
 - `RAZORPAY_WEBHOOK_SECRET`
 
 When switching modes in the Razorpay dashboard, update the variables above in Vercel so the server and client use the matching keys.
+
+## Database schema
+
+The application bootstraps its PostgreSQL schema at runtime via `ensureTables()` in `app/lib/bootstrap.ts`. It creates or updates the following tables:
+
+- **users**: `id` UUID primary key, `email` unique lowercase text, optional `name` and `phone`, `is_admin` boolean, `password_hash`, `created_at` timestamp.
+- **purchases**: records entitlements with `user_id` UUID FK to `users`, `product`, `amount_cents`, `currency`, `provider`, optional `provider_order_id`, `created_at`.
+- **payments**: logs payment events with `user_id` UUID FK, `provider`, `provider_payment_id`, `status`, `amount_cents`, `currency`, raw JSON payload, `created_at`, and uniqueness on `(provider, provider_payment_id)`.
+
+Run the migration locally by importing and executing `ensureTables()` or starting the dev server. On deploy, this function runs automatically to keep the schema in sync.
