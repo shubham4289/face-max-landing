@@ -1,4 +1,4 @@
-@@ -1,6 +1,55 @@
+
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 export async function hashPassword(p: string) { return await bcrypt.hash(p, 10); }
