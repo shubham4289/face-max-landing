@@ -54,6 +54,7 @@ import crypto from 'crypto';
 import CoursePage from '../app/course/page';
 import { POST as StripeWebhook } from '../app/api/webhooks/stripe/route';
 import { POST as PaymentWebhook } from '../app/api/webhook/payment/route';
+import { POST as CreateOrder } from '../app/api/payments/create/route';
 import { POST as AdminInvite } from '../app/api/admin/invite/route';
 import { POST as ForgotPassword } from '../app/api/auth/forgot-password/route';
 
@@ -94,6 +95,38 @@ describe('/course page access', () => {
   });
 });
 
+describe('payments create', () => {
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: 'ord_1' }),
+    }) as any;
+    process.env.RAZORPAY_KEY_ID = 'key';
+    process.env.RAZORPAY_KEY_SECRET = 'sec';
+    process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID = 'key';
+    process.env.APP_URL = 'https://www.thefacemax.club';
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  test('returns order info', async () => {
+    const req = new Request('http://localhost/api/payments/create', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'x@example.com' }),
+    });
+    const res = await CreateOrder(req);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.ok).toBe(true);
+    expect((global.fetch as any).mock.calls.length).toBe(1);
+  });
+});
+
 describe('webhook handlers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -131,9 +164,9 @@ describe('webhook handlers', () => {
   test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
+      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce([{ id: 'u1' }])
       .mockResolvedValueOnce([{}])
-      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
     const event = {
@@ -169,9 +202,9 @@ describe('webhook handlers', () => {
   test('razorpay webhook uses fallback name when none provided', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
+      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce([{ id: 'u1' }])
       .mockResolvedValueOnce([{}])
-      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
     const event = {

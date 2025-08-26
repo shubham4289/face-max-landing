@@ -22,7 +22,7 @@ In Vercel Project Settings → Environment Variables, add:
 - `RAZORPAY_WEBHOOK_SECRET` – verifies Razorpay webhooks at `/api/webhook/payment`.
 - `APP_URL` – base URL for emails; must be `https://thefacemax.com`.
 - `RESEND_API_KEY` – API key for sending emails through Resend.
-- `EMAIL_FROM` – sender address (`admin@thefacemax.com`).
+- `RESEND_FROM` – sender address (`admin@thefacemax.com`).
 
 ## Deploy on Vercel
 1. Push this repo to GitHub.
@@ -37,3 +37,16 @@ In Vercel Project Settings → Environment Variables, add:
    - Events: `payment.captured`
 2. When a payment is captured, the webhook marks `purchased=true` and sends a set‑password email.
 3. Forgot password is allowed only if `purchased=true`.
+
+## Razorpay (.club) setup
+For the `thefacemax.club` Vercel project, configure these environment variables:
+
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`
+- `RAZORPAY_WEBHOOK_SECRET`
+- `RESEND_API_KEY`
+- `RESEND_FROM` (use `admin@thefacemax.com`)
+- `APP_URL` (should be `https://www.thefacemax.club`)
+
+The payment API defaults to USD. To switch to INR, edit the `CURRENCY` constant in `app/api/payments/create/route.ts`.
