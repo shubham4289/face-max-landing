@@ -5,7 +5,14 @@ interface PageProps {
 }
 
 export default function Page({ searchParams }: PageProps) {
-  const token = searchParams.token ?? "";
+  const token = searchParams.token;
+  if (!token) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <p>Invalid or expired link</p>
+      </div>
+    );
+  }
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <SetPasswordForm token={token} />
