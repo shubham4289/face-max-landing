@@ -86,7 +86,9 @@ export async function ensureTables() {
     );
   `;
   await sql`ALTER TABLE payments ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS user_id UUID;`;
   await sql`ALTER TABLE payments ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
+  await sql`ALTER TABLE payments ALTER COLUMN user_id SET NOT NULL;`;
   await sql`ALTER TABLE payments DROP COLUMN IF EXISTS email;`;
   await sql`ALTER TABLE payments DROP COLUMN IF EXISTS payload;`;
   await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'captured';`;
@@ -113,7 +115,9 @@ export async function ensureTables() {
     );
   `;
   await sql`ALTER TABLE purchases ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE purchases ADD COLUMN IF NOT EXISTS user_id UUID;`;
   await sql`ALTER TABLE purchases ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
+  await sql`ALTER TABLE purchases ALTER COLUMN user_id SET NOT NULL;`;
   await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS course_id;`;
   await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS payment_id;`;
   await sql`ALTER TABLE purchases ADD COLUMN IF NOT EXISTS provider TEXT;`;
