@@ -33,7 +33,7 @@ export type CourseData = Array<{
 
 export async function getCourseData(): Promise<CourseData> {
   try {
-    await ensureTables();
+    await ensureTables;
 
     const sections = (await sql`
       SELECT id, title, order_index

@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    await ensureTables();
+    await ensureTables;
 
     const entity = evt.payload?.payment?.entity || {};
     const email = (entity.email || entity.notes?.email || entity.contact || '').toLowerCase();

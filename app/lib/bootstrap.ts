@@ -1,10 +1,7 @@
 // app/lib/bootstrap.ts
 import { sql } from "@/app/lib/db";
 
-let done = false;
-
-export async function ensureTables() {
-  if (done) return;
+export const ensureTables: Promise<void> = (async () => {
 
   // Guard constraints via pg_constraint so boot can run on every request without errors.
 
@@ -177,6 +174,4 @@ export async function ensureTables() {
     );
   `;
   await sql`CREATE INDEX IF NOT EXISTS idx_password_tokens_email ON password_tokens(email);`;
-
-  done = true;
-}
+})();

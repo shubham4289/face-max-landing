@@ -15,7 +15,7 @@ import { setPasswordEmail } from '@/app/emails/set-password';
 export async function POST(req: Request) {
   try {
     requireAdminEmail();
-    await ensureTables();
+    await ensureTables;
 
     const body = await req.json().catch(() => ({} as any));
     const email = (body.email ?? '').toString().trim().toLowerCase();

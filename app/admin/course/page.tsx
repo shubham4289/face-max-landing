@@ -13,7 +13,7 @@ export default async function AdminCoursePage() {
     return <div style={{ padding: 24 }}>Unauthorized</div>;
   }
 
-  await ensureTables();
+  await ensureTables;
   const { sections, lectures } = await getData();
 
   return (

@@ -9,7 +9,7 @@ import { sendMail } from '@/app/lib/email';
 
 export async function POST(req: Request) {
   try {
-    await ensureTables();
+    await ensureTables;
     const { email } = await req.json().catch(() => ({}) as any);
     const emailLower = (email ?? '').toString().trim().toLowerCase();
     if (!emailLower) {
