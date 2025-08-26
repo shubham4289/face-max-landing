@@ -51,6 +51,7 @@ export async function ensureTables() {
   await sql`
     DO $$
     BEGIN
+      LOCK TABLE otps IN ACCESS EXCLUSIVE MODE;
       IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'otps_user_id_fkey'
       ) THEN
