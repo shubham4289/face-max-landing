@@ -71,3 +71,7 @@ The application bootstraps its PostgreSQL schema at runtime via `ensureTables()`
 - **payments**: logs payment events with `user_id` UUID FK, `provider`, `provider_payment_id`, `status`, `amount_cents`, `currency`, raw JSON payload, `created_at`, and uniqueness on `(provider, provider_payment_id)`.
 
 Run the migration locally by importing and executing `ensureTables()` or starting the dev server. On deploy, this function runs automatically to keep the schema in sync.
+
+## Schema guard
+
+`ensureTables()` also acts as a schema guard. On startup it adds missing `user_id` columns to `payments` and `purchases`, wires their foreign keys to `users(id)` with `ON DELETE CASCADE`, ensures the `users` table exists with required fields, and maintains a unique index on `lower(email)`.

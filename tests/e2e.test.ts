@@ -72,13 +72,14 @@ describe('users helper', () => {
   });
 
   test('upsertUserByEmail lowercases email', async () => {
-    sql.mockResolvedValueOnce([{ id: 'u1', email: 'foo@example.com' }]);
+    const userId = '00000000-0000-0000-0000-000000000001';
+    sql.mockResolvedValueOnce([{ id: userId, email: 'foo@example.com' }]);
     const res = await upsertUserByEmail({
       email: 'Foo@Example.COM',
       name: 'Foo',
       phone: '123',
     });
-    expect(res).toEqual({ id: 'u1', email: 'foo@example.com' });
+    expect(res).toEqual({ id: userId, email: 'foo@example.com' });
     expect(sql.mock.calls[0][1]).toBe('foo@example.com');
   });
 });
@@ -96,7 +97,7 @@ describe('/course page access', () => {
   });
 
   test('non-buyer sees paywall', async () => {
-    getSession.mockReturnValue({ userId: 'u1' });
+    getSession.mockReturnValue({ userId: '00000000-0000-0000-0000-000000000010' });
     userHasPurchase.mockResolvedValue(false);
     const el = await CoursePage();
     const html = renderToStaticMarkup(el);
@@ -104,7 +105,7 @@ describe('/course page access', () => {
   });
 
   test('buyer sees course', async () => {
-    getSession.mockReturnValue({ userId: 'u1' });
+    getSession.mockReturnValue({ userId: '00000000-0000-0000-0000-000000000010' });
     userHasPurchase.mockResolvedValue(true);
     getCourseData.mockResolvedValue([]);
     const el = await CoursePage();
@@ -154,7 +155,7 @@ describe('webhook handlers', () => {
     process.env.STRIPE_WEBHOOK_SECRET = 'sec';
     sql
       .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce([{ id: '00000000-0000-0000-0000-000000000003' }])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
@@ -182,8 +183,9 @@ describe('webhook handlers', () => {
 
   test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
+    const userId = '00000000-0000-0000-0000-000000000002';
     sql
-      .mockResolvedValueOnce([{ id: 'u1', email: 'b@example.com' }])
+      .mockResolvedValueOnce([{ id: userId, email: 'b@example.com' }])
       .mockResolvedValueOnce([{ id: 'pay_1' }])
       .mockResolvedValueOnce(undefined);
 
@@ -216,15 +218,17 @@ describe('webhook handlers', () => {
     expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     const payUser = sql.mock.calls[1][1];
     const purchaseUser = sql.mock.calls[2][1];
-    expect(payUser).toBe('u1');
-    expect(purchaseUser).toBe('u1');
+    expect(payUser).toBe(userId);
+    expect(purchaseUser).toBe(userId);
+    expect(payUser).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     expect(sendMail).toHaveBeenCalledTimes(1);
   });
 
   test('razorpay webhook is idempotent', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
+    const userId = '00000000-0000-0000-0000-000000000002';
     sql
-      .mockResolvedValueOnce([{ id: 'u1', email: 'b@example.com' }])
+      .mockResolvedValueOnce([{ id: userId, email: 'b@example.com' }])
       .mockResolvedValueOnce([]);
 
     const event = {
@@ -281,7 +285,7 @@ describe('admin invite', () => {
     requireAdminEmail.mockReturnValue(undefined);
     sql
       .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce([{ id: '00000000-0000-0000-0000-000000000005' }])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
