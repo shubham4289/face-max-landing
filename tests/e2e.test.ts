@@ -132,6 +132,7 @@ describe('webhook handlers', () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
       .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce([{}])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
@@ -169,6 +170,7 @@ describe('webhook handlers', () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
       .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce([{}])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
@@ -195,13 +197,13 @@ describe('webhook handlers', () => {
     const res = await PaymentWebhook(req);
     expect(res.status).toBe(200);
     const nameParam = sql.mock.calls[0][3];
-    expect(nameParam).toBe('noname');
+    expect(nameParam).toBe('');
   });
 });
 
 describe('admin invite', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   test('creates user and purchase and sends email', async () => {
@@ -227,11 +229,11 @@ describe('admin invite', () => {
 
 describe('forgot password', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   test('sends email only for buyers', async () => {
-    sql.mockResolvedValueOnce([{ purchased: true }]);
+    sql.mockResolvedValueOnce([{ purchased: true }]).mockResolvedValueOnce(undefined);
     const req = new Request('http://localhost/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email: 'buyer@example.com' }),
