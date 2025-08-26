@@ -68,26 +68,25 @@ export async function ensureTables() {
     CREATE TABLE IF NOT EXISTS payments (
       id TEXT PRIMARY KEY,
       provider TEXT NOT NULL,
-      payment_id TEXT NOT NULL,
       email TEXT NOT NULL,
-      amount INTEGER,       -- store in minor units if available
-      currency TEXT,
-      raw JSONB,            -- store full webhook for audit
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      amount INTEGER NOT NULL,
+      currency TEXT NOT NULL,
+      payload JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
 
-  // PASSWORD RESET TOKENS
+  // PASSWORD TOKENS
   await sql`
-    CREATE TABLE IF NOT EXISTS password_reset_tokens (
-      token_id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      token_hash TEXT NOT NULL,
-      purpose TEXT NOT NULL, -- 'set-password' or 'reset-password'
-      expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    CREATE TABLE IF NOT EXISTS password_tokens (
+      token TEXT PRIMARY KEY,
+      email TEXT NOT NULL,
+      purpose TEXT NOT NULL CHECK (purpose IN ('set','reset')),
+      expires_at TIMESTAMPTZ NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
+  await sql`CREATE INDEX IF NOT EXISTS idx_password_tokens_email ON password_tokens(email);`;
 
   done = true;
 }
