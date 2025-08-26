@@ -129,14 +129,14 @@ describe('payments create', () => {
 
 describe('webhook handlers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   test('stripe webhook creates user, purchase, sends email', async () => {
     process.env.STRIPE_WEBHOOK_SECRET = 'sec';
     sql
       .mockResolvedValueOnce([])
-      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([{ id: 'u1' }])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
@@ -157,6 +157,7 @@ describe('webhook handlers', () => {
     expect(res.status).toBe(200);
     const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('RETURNING id'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     expect(sendEmail).toHaveBeenCalledTimes(1);
   });
@@ -164,9 +165,9 @@ describe('webhook handlers', () => {
   test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
-      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce([{ id: 'u1' }])
-      .mockResolvedValueOnce([{}])
+      .mockResolvedValueOnce([{ id: 'p1' }])
+      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
     const event = {
@@ -194,17 +195,17 @@ describe('webhook handlers', () => {
     expect(res.status).toBe(200);
     const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
-    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     expect(sendMail).toHaveBeenCalledTimes(1);
   });
 
   test('razorpay webhook uses fallback name when none provided', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
-      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce([{ id: 'u1' }])
-      .mockResolvedValueOnce([{}])
+      .mockResolvedValueOnce([{ id: 'p1' }])
+      .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
     const event = {
@@ -229,8 +230,8 @@ describe('webhook handlers', () => {
     });
     const res = await PaymentWebhook(req);
     expect(res.status).toBe(200);
-    const nameParam = sql.mock.calls[0][3];
-    expect(nameParam).toBe('');
+    const nameParam = sql.mock.calls[0][2];
+    expect(nameParam).toBe('Customer');
   });
 });
 
@@ -243,7 +244,7 @@ describe('admin invite', () => {
     requireAdminEmail.mockReturnValue(undefined);
     sql
       .mockResolvedValueOnce([])
-      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([{ id: 'u1' }])
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined);
 
@@ -255,6 +256,7 @@ describe('admin invite', () => {
     expect(res.status).toBe(200);
     const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('RETURNING id'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     expect(sendEmail).toHaveBeenCalledTimes(1);
   });
@@ -266,7 +268,7 @@ describe('forgot password', () => {
   });
 
   test('sends email only for buyers', async () => {
-    sql.mockResolvedValueOnce([{ purchased: true }]).mockResolvedValueOnce(undefined);
+    sql.mockResolvedValueOnce([{ ok: 1 }]).mockResolvedValueOnce(undefined);
     const req = new Request('http://localhost/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email: 'buyer@example.com' }),
@@ -282,7 +284,7 @@ describe('forgot password', () => {
   });
 
   test('non-buyers do not receive email', async () => {
-    sql.mockResolvedValueOnce([{ purchased: false }]);
+    sql.mockResolvedValueOnce([]);
     const req = new Request('http://localhost/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email: 'nobuyer@example.com' }),

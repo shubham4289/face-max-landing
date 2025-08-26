@@ -28,10 +28,14 @@ export async function POST(req: Request) {
     const existing = (await sql`SELECT id, name FROM users WHERE email=${email} LIMIT 1;`) as { id: string; name: string }[];
     let userId: string;
     if (existing.length === 0) {
-      userId = randomId();
       const userName = name || email;
       const fakeHash = await hashPassword(randomId());
-      await sql`INSERT INTO users(id, email, name, password_hash) VALUES(${userId}, ${email}, ${userName}, ${fakeHash});`;
+      const rows = (await sql`
+        INSERT INTO users(email, name, password_hash)
+        VALUES(${email}, ${userName}, ${fakeHash})
+        RETURNING id;
+      `) as { id: string }[];
+      userId = rows[0].id;
     } else {
       userId = existing[0].id;
       if (name && name !== existing[0].name) {
@@ -39,7 +43,11 @@ export async function POST(req: Request) {
       }
     }
 
-    await sql`INSERT INTO purchases(user_id, course_id) VALUES(${userId}, ${COURSE_ID}) ON CONFLICT DO NOTHING;`;
+    await sql`
+      INSERT INTO purchases(user_id, product, amount_cents, currency)
+      VALUES(${userId}, ${COURSE_ID}, 0, 'INR')
+      ON CONFLICT DO NOTHING;
+    `;
 
     const token = randomId();
     const tokenHash = hashToken(token);

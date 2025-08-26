@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { sql } from '@/app/lib/db';
 import { ensureTables } from '@/app/lib/bootstrap';
-import { verifyPassword, hashToken, randomId } from '@/app/lib/crypto';
+import { verifyPassword, hashToken } from '@/app/lib/crypto';
 import { generateOtp, expiresIn } from '@/app/lib/otp';
 import { sendEmail } from '@/app/lib/email';
 
@@ -20,8 +20,7 @@ export async function POST(req: Request) {
 
   const code = generateOtp(6);
   const exp = expiresIn(10);
-  const otpId = randomId();
-  await sql`INSERT INTO otps(id, user_id, code_hash, purpose, expires_at) VALUES(${otpId}, ${user.id}, ${hashToken(code)}, 'login', ${exp});`;
+  await sql`INSERT INTO otps(user_id, code_hash, purpose, expires_at) VALUES(${user.id}, ${hashToken(code)}, 'login', ${exp});`;
 
   await sendEmail(email, 'Your FaceMax login code', `
     <p>Hello ${user.name},</p>
