@@ -8,7 +8,7 @@ import { hashToken } from '@/app/lib/crypto';
 import { setSession } from '@/app/lib/cookies';
 
 export async function POST(req: Request) {
-  await ensureTables();
+  await ensureTables;
   const { email, code } = await req.json();
   if (!email || !code) return NextResponse.json({ error: 'Email and code required' }, { status: 400 });
   const users = (await sql`SELECT id, name, email FROM users WHERE email=${email.toLowerCase()} LIMIT 1;`) as { id: string; name: string; email: string }[];

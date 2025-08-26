@@ -18,7 +18,7 @@ export async function GET() {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    await ensureTables();
+    await ensureTables;
 
     const rows = (await sql`
       SELECT id, section_id, title, order_index, video_id, duration_min
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    await ensureTables();
+    await ensureTables;
 
     const body = await req.json().catch(() => ({} as any));
     const sectionId = (body.sectionId ?? "").toString().trim();

@@ -8,7 +8,7 @@ import { hashPassword, consumePasswordToken } from '@/app/lib/crypto';
 import { setSession } from '@/app/lib/cookies';
 
 export async function POST(req: Request) {
-  await ensureTables();
+  await ensureTables;
   const { token, password } = await req.json().catch(() => ({}) as any);
   if (!token || !password) {
     return NextResponse.json(

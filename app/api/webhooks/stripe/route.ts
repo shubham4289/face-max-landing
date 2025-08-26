@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     const name = obj.customer_details?.name || obj.customer_name || '';
     if (!email) return NextResponse.json({ ok: true });
 
-    await ensureTables();
+    await ensureTables;
     const emailLower = email.toLowerCase();
     const existing = (await sql`SELECT id, name FROM users WHERE email=${emailLower} LIMIT 1;`) as {
       id: string;

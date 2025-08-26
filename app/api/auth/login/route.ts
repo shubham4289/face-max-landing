@@ -9,7 +9,7 @@ import { generateOtp, expiresIn } from '@/app/lib/otp';
 import { sendEmail } from '@/app/lib/email';
 
 export async function POST(req: Request) {
-  await ensureTables();
+  await ensureTables;
   const { email, password } = await req.json();
   if (!email || !password) return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
   const rows = (await sql`SELECT id, name, password_hash FROM users WHERE email=${email.toLowerCase()} LIMIT 1;`) as { id: string; name: string; password_hash: string }[];

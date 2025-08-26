@@ -14,7 +14,7 @@ jest.mock('@/app/lib/db', () => ({
 }));
 
 jest.mock('../app/lib/bootstrap', () => ({
-  ensureTables: jest.fn().mockResolvedValue(undefined),
+  ensureTables: Promise.resolve(),
 }));
 
 jest.mock('../app/lib/email', () => ({
