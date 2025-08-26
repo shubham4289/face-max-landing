@@ -14,20 +14,23 @@ export async function ensureTables() {
     CREATE TABLE IF NOT EXISTS users (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       email TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
+      name TEXT,
+      phone TEXT,
       password_hash TEXT,
-      is_admin BOOLEAN DEFAULT FALSE,
+      is_admin BOOLEAN NOT NULL DEFAULT FALSE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
   await sql`ALTER TABLE users ALTER COLUMN id TYPE UUID USING id::uuid;`;
   await sql`ALTER TABLE users ALTER COLUMN email SET NOT NULL;`;
-  await sql`ALTER TABLE users ALTER COLUMN name SET NOT NULL;`;
-  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;`;
+  await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL;`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE;`;
   await sql`ALTER TABLE users ALTER COLUMN is_admin SET DEFAULT FALSE;`;
+  await sql`ALTER TABLE users ALTER COLUMN is_admin SET NOT NULL;`;
   await sql`ALTER TABLE users ALTER COLUMN created_at SET DEFAULT now();`;
   await sql`ALTER TABLE users DROP COLUMN IF EXISTS purchased;`;
-  await sql`ALTER TABLE users DROP COLUMN IF EXISTS phone;`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_idx ON users(LOWER(email));`;
 
   // OTPS
   await sql`
@@ -73,20 +76,28 @@ export async function ensureTables() {
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       provider TEXT NOT NULL,
-      provider_payment_id TEXT NOT NULL UNIQUE,
+      provider_payment_id TEXT NOT NULL,
+      status TEXT NOT NULL,
       amount_cents INT NOT NULL,
       currency TEXT NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      raw JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE(provider, provider_payment_id)
     );
   `;
   await sql`ALTER TABLE payments ALTER COLUMN id TYPE UUID USING id::uuid;`;
   await sql`ALTER TABLE payments ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
   await sql`ALTER TABLE payments DROP COLUMN IF EXISTS email;`;
   await sql`ALTER TABLE payments DROP COLUMN IF EXISTS payload;`;
+  await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'captured';`;
+  await sql`ALTER TABLE payments ALTER COLUMN status DROP DEFAULT;`;
+  await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS raw JSONB NOT NULL DEFAULT '{}'::jsonb;`;
+  await sql`ALTER TABLE payments ALTER COLUMN raw DROP DEFAULT;`;
   await sql`ALTER TABLE payments ALTER COLUMN created_at SET DEFAULT now();`;
   await sql`ALTER TABLE payments DROP CONSTRAINT IF EXISTS payments_user_id_fkey;`;
   await sql`ALTER TABLE payments ADD CONSTRAINT payments_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
-  await sql`CREATE UNIQUE INDEX IF NOT EXISTS payments_provider_payment_id_key ON payments(provider_payment_id);`;
+  await sql`DROP INDEX IF EXISTS payments_provider_payment_id_key;`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS payments_provider_payment_key ON payments(provider, provider_payment_id);`;
 
   // PURCHASES
   await sql`
@@ -96,6 +107,8 @@ export async function ensureTables() {
       product TEXT NOT NULL,
       amount_cents INT NOT NULL,
       currency TEXT NOT NULL,
+      provider TEXT NOT NULL,
+      provider_order_id TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
@@ -103,6 +116,9 @@ export async function ensureTables() {
   await sql`ALTER TABLE purchases ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
   await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS course_id;`;
   await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS payment_id;`;
+  await sql`ALTER TABLE purchases ADD COLUMN IF NOT EXISTS provider TEXT;`;
+  await sql`ALTER TABLE purchases ALTER COLUMN provider SET NOT NULL;`;
+  await sql`ALTER TABLE purchases ADD COLUMN IF NOT EXISTS provider_order_id TEXT;`;
   await sql`ALTER TABLE purchases ALTER COLUMN created_at SET DEFAULT now();`;
   await sql`ALTER TABLE purchases DROP CONSTRAINT IF EXISTS purchases_user_id_fkey;`;
   await sql`ALTER TABLE purchases ADD CONSTRAINT purchases_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;

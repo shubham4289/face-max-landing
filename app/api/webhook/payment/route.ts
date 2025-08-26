@@ -7,6 +7,7 @@ import { ensureTables } from '@/app/lib/bootstrap';
 import { issuePasswordToken } from '@/app/lib/crypto';
 import { sendMail } from '@/app/lib/email';
 import { COURSE_ID } from '@/app/lib/course-ids';
+import { upsertUserByEmail } from '@/app/lib/users';
 
 export async function POST(req: Request) {
   const reqId = crypto.randomUUID();
@@ -38,29 +39,25 @@ export async function POST(req: Request) {
     await ensureTables();
 
     const entity = evt.payload?.payment?.entity || {};
-    const email = (entity.email || entity.notes?.email || '').toLowerCase();
+    const email = (entity.email || entity.notes?.email || entity.contact || '').toLowerCase();
     if (!email) {
       console.error(`[webhook ${reqId}] missing email`);
       return NextResponse.json({ ok: true });
     }
     const name = entity.notes?.name || entity.contact_name || null;
+    const phone = entity.contact || entity.notes?.phone || null;
     const amount = entity.amount || 0;
     const currency = entity.currency || 'INR';
     const paymentId = entity.id || '';
+    const orderId = entity.order_id || null;
 
-    const rows = (await sql`
-      INSERT INTO users(email, name)
-      VALUES(${email}, ${name || 'Customer'})
-      ON CONFLICT (email) DO UPDATE
-      SET name = COALESCE(users.name, EXCLUDED.name)
-      RETURNING id;
-    `) as { id: string }[];
-    const userId = rows[0].id;
+    const user = await upsertUserByEmail({ email, name, phone });
+    const userId = user.id;
 
     const payRows = (await sql`
-      INSERT INTO payments(user_id, provider, provider_payment_id, amount_cents, currency)
-      VALUES(${userId}, 'razorpay', ${paymentId}, ${amount}, ${currency})
-      ON CONFLICT (provider_payment_id) DO NOTHING
+      INSERT INTO payments(user_id, provider, provider_payment_id, status, amount_cents, currency, raw)
+      VALUES(${userId}, 'razorpay', ${paymentId}, 'captured', ${amount}, ${currency}, ${JSON.stringify(evt)})
+      ON CONFLICT (provider, provider_payment_id) DO NOTHING
       RETURNING id;
     `) as { id: string }[];
     if (payRows.length === 0) {
@@ -69,16 +66,16 @@ export async function POST(req: Request) {
     }
 
     await sql`
-      INSERT INTO purchases(user_id, product, amount_cents, currency)
-      VALUES(${userId}, ${COURSE_ID}, ${amount}, ${currency})
-      ON CONFLICT DO NOTHING;
+      INSERT INTO purchases(user_id, product, amount_cents, currency, provider, provider_order_id)
+      VALUES(${userId}, ${COURSE_ID}, ${amount}, ${currency}, 'razorpay', ${orderId})
+      ON CONFLICT (user_id, product) DO NOTHING;
     `;
 
-    const token = await issuePasswordToken(email, 'set', 120);
+    const token = await issuePasswordToken(user.email, 'set', 120);
     const appUrl = process.env.APP_URL || 'https://thefacemax.com';
     const link = `${appUrl}/auth/set-password?token=${token}`;
     await sendMail(
-      email,
+      user.email,
       'Welcome to The Ultimate Implant Course',
       `<p>Welcome to The Ultimate Implant Course.</p><p><a href="${link}">Click here to set your password</a>. This link is valid for 2 hours.</p>`
     );

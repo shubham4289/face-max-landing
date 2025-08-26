@@ -57,6 +57,7 @@ import { POST as PaymentWebhook } from '../app/api/webhook/payment/route';
 import { POST as CreateOrder } from '../app/api/payments/create/route';
 import { POST as AdminInvite } from '../app/api/admin/invite/route';
 import { POST as ForgotPassword } from '../app/api/auth/forgot-password/route';
+import { upsertUserByEmail } from '../app/lib/users';
 
 const { sql } = require('@/app/lib/db');
 const { getSession } = require('../app/lib/cookies');
@@ -64,6 +65,23 @@ const { userHasPurchase } = require('../app/lib/access');
 const { getCourseData } = require('../app/lib/course-data');
 const { sendEmail, sendMail } = require('../app/lib/email');
 const { requireAdminEmail } = require('../app/lib/admin');
+
+describe('users helper', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('upsertUserByEmail lowercases email', async () => {
+    sql.mockResolvedValueOnce([{ id: 'u1', email: 'foo@example.com' }]);
+    const res = await upsertUserByEmail({
+      email: 'Foo@Example.COM',
+      name: 'Foo',
+      phone: '123',
+    });
+    expect(res).toEqual({ id: 'u1', email: 'foo@example.com' });
+    expect(sql.mock.calls[0][1]).toBe('foo@example.com');
+  });
+});
 
 describe('/course page access', () => {
   beforeEach(() => {
@@ -165,9 +183,8 @@ describe('webhook handlers', () => {
   test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
-      .mockResolvedValueOnce([{ id: 'u1' }])
-      .mockResolvedValueOnce([{ id: 'p1' }])
-      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([{ id: 'u1', email: 'b@example.com' }])
+      .mockResolvedValueOnce([{ id: 'pay_1' }])
       .mockResolvedValueOnce(undefined);
 
     const event = {
@@ -197,26 +214,29 @@ describe('webhook handlers', () => {
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
+    const payUser = sql.mock.calls[1][1];
+    const purchaseUser = sql.mock.calls[2][1];
+    expect(payUser).toBe('u1');
+    expect(purchaseUser).toBe('u1');
     expect(sendMail).toHaveBeenCalledTimes(1);
   });
 
-  test('razorpay webhook uses fallback name when none provided', async () => {
+  test('razorpay webhook is idempotent', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
     sql
-      .mockResolvedValueOnce([{ id: 'u1' }])
-      .mockResolvedValueOnce([{ id: 'p1' }])
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValueOnce([{ id: 'u1', email: 'b@example.com' }])
+      .mockResolvedValueOnce([]);
 
     const event = {
       event: 'payment.captured',
       payload: {
         payment: {
           entity: {
-            id: 'pay_2',
-            email: 'noname@example.com',
+            id: 'pay_1',
+            email: 'b@example.com',
             amount: 1000,
             currency: 'INR',
+            notes: { email: 'b@example.com', name: 'Bob' },
           },
         },
       },
@@ -230,9 +250,26 @@ describe('webhook handlers', () => {
     });
     const res = await PaymentWebhook(req);
     expect(res.status).toBe(200);
-    const nameParam = sql.mock.calls[0][2];
-    expect(nameParam).toBe('Customer');
+    expect(sql.mock.calls.length).toBe(2);
+    expect(sendMail).not.toHaveBeenCalled();
   });
+
+  test('razorpay webhook returns 400 on bad signature', async () => {
+    process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
+    const event = {
+      event: 'payment.captured',
+      payload: { payment: { entity: { id: 'pay_1', email: 'b@example.com' } } },
+    };
+    const raw = JSON.stringify(event);
+    const req = new Request('http://localhost/api/webhook/payment', {
+      method: 'POST',
+      headers: { 'x-razorpay-signature': 'bad' },
+      body: raw,
+    });
+    const res = await PaymentWebhook(req);
+    expect(res.status).toBe(400);
+  });
+
 });
 
 describe('admin invite', () => {
