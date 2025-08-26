@@ -5,47 +5,46 @@ let done = false;
 
 export async function ensureTables() {
   if (done) return;
+
+  // Required for gen_random_uuid()
+  await sql`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`;
+
   // USERS
   await sql`
     CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       email TEXT UNIQUE NOT NULL,
-      name TEXT,
+      name TEXT NOT NULL,
       password_hash TEXT,
-      purchased BOOLEAN DEFAULT FALSE,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      is_admin BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
-  // Ensure purchased column exists (if table came from an older revision)
-  await sql`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name='users' AND column_name='purchased'
-      ) THEN
-        ALTER TABLE users ADD COLUMN purchased BOOLEAN DEFAULT FALSE;
-      END IF;
-    END $$;
-  `;
+  await sql`ALTER TABLE users ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE users ALTER COLUMN email SET NOT NULL;`;
+  await sql`ALTER TABLE users ALTER COLUMN name SET NOT NULL;`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;`;
+  await sql`ALTER TABLE users ALTER COLUMN is_admin SET DEFAULT FALSE;`;
+  await sql`ALTER TABLE users ALTER COLUMN created_at SET DEFAULT now();`;
+  await sql`ALTER TABLE users DROP COLUMN IF EXISTS purchased;`;
+  await sql`ALTER TABLE users DROP COLUMN IF EXISTS phone;`;
 
-  // Ensure new optional fields and constraints on users
-  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;`;
-  await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL;`;
-  await sql`ALTER TABLE users ALTER COLUMN name SET DEFAULT '';`;
-
-  // OTPS (already used for login)
+  // OTPS
   await sql`
     CREATE TABLE IF NOT EXISTS otps (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id),
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       code_hash TEXT NOT NULL,
       purpose TEXT NOT NULL,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-      expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-      consumed_at TIMESTAMP WITH TIME ZONE
+      expires_at TIMESTAMPTZ NOT NULL,
+      consumed_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
+  await sql`ALTER TABLE otps ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE otps ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
+  await sql`ALTER TABLE otps DROP CONSTRAINT IF EXISTS otps_user_id_fkey;`;
+  await sql`ALTER TABLE otps ADD CONSTRAINT otps_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
 
   // COURSE STRUCTURE
   await sql`
@@ -53,7 +52,7 @@ export async function ensureTables() {
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       "order" INT NOT NULL DEFAULT 0,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
   await sql`
@@ -64,34 +63,50 @@ export async function ensureTables() {
       order_index INT NOT NULL DEFAULT 0,
       vdocipher_videoid TEXT,
       duration_minutes INT,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
-    );
-  `;
-
-  // PAYMENTS (log)
-  await sql`
-    CREATE TABLE IF NOT EXISTS payments (
-      id TEXT PRIMARY KEY,
-      provider TEXT NOT NULL,
-      email TEXT NOT NULL,
-      amount INTEGER NOT NULL,
-      currency TEXT NOT NULL,
-      payload JSONB NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
 
+  // PAYMENTS
+  await sql`
+    CREATE TABLE IF NOT EXISTS payments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      provider TEXT NOT NULL,
+      provider_payment_id TEXT NOT NULL UNIQUE,
+      amount_cents INT NOT NULL,
+      currency TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `;
+  await sql`ALTER TABLE payments ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE payments ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
+  await sql`ALTER TABLE payments DROP COLUMN IF EXISTS email;`;
+  await sql`ALTER TABLE payments DROP COLUMN IF EXISTS payload;`;
+  await sql`ALTER TABLE payments ALTER COLUMN created_at SET DEFAULT now();`;
+  await sql`ALTER TABLE payments DROP CONSTRAINT IF EXISTS payments_user_id_fkey;`;
+  await sql`ALTER TABLE payments ADD CONSTRAINT payments_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS payments_provider_payment_id_key ON payments(provider_payment_id);`;
+
   // PURCHASES
   await sql`
     CREATE TABLE IF NOT EXISTS purchases (
-      user_id TEXT NOT NULL REFERENCES users(id),
-      course_id TEXT NOT NULL,
-      payment_id TEXT UNIQUE,
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-      PRIMARY KEY (user_id, course_id)
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      product TEXT NOT NULL,
+      amount_cents INT NOT NULL,
+      currency TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
-  await sql`CREATE UNIQUE INDEX IF NOT EXISTS purchases_payment_id_key ON purchases(payment_id);`;
+  await sql`ALTER TABLE purchases ALTER COLUMN id TYPE UUID USING id::uuid;`;
+  await sql`ALTER TABLE purchases ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
+  await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS course_id;`;
+  await sql`ALTER TABLE purchases DROP COLUMN IF EXISTS payment_id;`;
+  await sql`ALTER TABLE purchases ALTER COLUMN created_at SET DEFAULT now();`;
+  await sql`ALTER TABLE purchases DROP CONSTRAINT IF EXISTS purchases_user_id_fkey;`;
+  await sql`ALTER TABLE purchases ADD CONSTRAINT purchases_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS purchases_user_product_key ON purchases(user_id, product);`;
 
   // PASSWORD TOKENS
   await sql`

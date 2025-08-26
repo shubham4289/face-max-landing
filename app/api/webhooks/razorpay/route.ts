@@ -66,16 +66,24 @@ export async function POST(req: Request) {
     let userId: string;
     let userName: string;
     if (existing.length === 0) {
-      userId = randomId();
       userName = name || emailLower;
       const fakeHash = await hashPassword(randomId());
-      await sql`INSERT INTO users(id, email, name, password_hash) VALUES(${userId}, ${emailLower}, ${userName}, ${fakeHash});`;
+      const rows = (await sql`
+        INSERT INTO users(email, name, password_hash)
+        VALUES(${emailLower}, ${userName}, ${fakeHash})
+        RETURNING id;
+      `) as { id: string }[];
+      userId = rows[0].id;
     } else {
       userId = existing[0].id;
       userName = existing[0].name;
     }
 
-    await sql`INSERT INTO purchases(user_id, course_id) VALUES(${userId}, ${COURSE_ID}) ON CONFLICT DO NOTHING;`;
+    await sql`
+      INSERT INTO purchases(user_id, product, amount_cents, currency)
+      VALUES(${userId}, ${COURSE_ID}, ${payment.amount || 0}, ${payment.currency || 'INR'})
+      ON CONFLICT DO NOTHING;
+    `;
 
     const token = randomId();
     const tokenHash = hashToken(token);

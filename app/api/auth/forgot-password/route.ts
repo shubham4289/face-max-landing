@@ -16,8 +16,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const rows = (await sql`SELECT purchased FROM users WHERE email=${emailLower} LIMIT 1;`) as { purchased: boolean }[];
-    if (rows.length === 1 && rows[0].purchased) {
+    const rows = (await sql`
+      SELECT 1 as ok FROM purchases p
+      JOIN users u ON u.id = p.user_id
+      WHERE u.email=${emailLower}
+      LIMIT 1;
+    `) as { ok: number }[];
+    if (rows.length === 1) {
       const token = await issuePasswordToken(emailLower, 'reset', 60);
       const appUrl = process.env.APP_URL || 'https://thefacemax.com';
       const link = `${appUrl}/auth/set-password?token=${token}`;
