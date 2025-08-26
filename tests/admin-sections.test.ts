@@ -9,7 +9,7 @@ jest.mock('next/server', () => ({
 
 jest.mock('server-only', () => ({}), { virtual: true });
 
-jest.mock('../app/lib/db', () => ({
+jest.mock('@/app/lib/db', () => ({
   sql: jest.fn(),
 }));
 
@@ -28,7 +28,7 @@ jest.mock('../app/lib/crypto', () => ({
 import { POST } from '../app/api/admin/sections/route';
 import { getCourseData } from '../app/lib/course-data';
 
-const { sql } = require('../app/lib/db');
+const { sql } = require('@/app/lib/db');
 const { getSession } = require('../app/lib/cookies');
 
 beforeEach(() => {
