@@ -6,6 +6,8 @@ let done = false;
 export async function ensureTables() {
   if (done) return;
 
+  // Guard constraints via pg_constraint so boot can run on every request without errors.
+
   // Required for gen_random_uuid()
   await sql`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`;
 
@@ -46,8 +48,17 @@ export async function ensureTables() {
   `;
   await sql`ALTER TABLE otps ALTER COLUMN id TYPE UUID USING id::uuid;`;
   await sql`ALTER TABLE otps ALTER COLUMN user_id TYPE UUID USING user_id::uuid;`;
-  await sql`ALTER TABLE otps DROP CONSTRAINT IF EXISTS otps_user_id_fkey;`;
-  await sql`ALTER TABLE otps ADD CONSTRAINT otps_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
+  await sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'otps_user_id_fkey'
+      ) THEN
+        ALTER TABLE otps
+          ADD CONSTRAINT otps_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+      END IF;
+    END $$;
+  `;
 
   // COURSE STRUCTURE
   await sql`
@@ -96,10 +107,28 @@ export async function ensureTables() {
   await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS raw JSONB NOT NULL DEFAULT '{}'::jsonb;`;
   await sql`ALTER TABLE payments ALTER COLUMN raw DROP DEFAULT;`;
   await sql`ALTER TABLE payments ALTER COLUMN created_at SET DEFAULT now();`;
-  await sql`ALTER TABLE payments DROP CONSTRAINT IF EXISTS payments_user_id_fkey;`;
-  await sql`ALTER TABLE payments ADD CONSTRAINT payments_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
-  await sql`DROP INDEX IF EXISTS payments_provider_payment_id_key;`;
-  await sql`CREATE UNIQUE INDEX IF NOT EXISTS payments_provider_payment_key ON payments(provider, provider_payment_id);`;
+  await sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'payments_user_id_fkey'
+      ) THEN
+        ALTER TABLE payments
+          ADD CONSTRAINT payments_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+      END IF;
+    END $$;
+  `;
+  await sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'payments_provider_payment_id_key'
+      ) THEN
+        ALTER TABLE payments
+          ADD CONSTRAINT payments_provider_payment_id_key UNIQUE (provider_payment_id);
+      END IF;
+    END $$;
+  `;
 
   // PURCHASES
   await sql`
@@ -124,8 +153,17 @@ export async function ensureTables() {
   await sql`ALTER TABLE purchases ALTER COLUMN provider SET NOT NULL;`;
   await sql`ALTER TABLE purchases ADD COLUMN IF NOT EXISTS provider_order_id TEXT;`;
   await sql`ALTER TABLE purchases ALTER COLUMN created_at SET DEFAULT now();`;
-  await sql`ALTER TABLE purchases DROP CONSTRAINT IF EXISTS purchases_user_id_fkey;`;
-  await sql`ALTER TABLE purchases ADD CONSTRAINT purchases_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;`;
+  await sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'purchases_user_id_fkey'
+      ) THEN
+        ALTER TABLE purchases
+          ADD CONSTRAINT purchases_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+      END IF;
+    END $$;
+  `;
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS purchases_user_product_key ON purchases(user_id, product);`;
 
   // PASSWORD TOKENS
