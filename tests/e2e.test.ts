@@ -19,6 +19,7 @@ jest.mock('../app/lib/bootstrap', () => ({
 
 jest.mock('../app/lib/email', () => ({
   sendEmail: jest.fn().mockResolvedValue(undefined),
+  sendMail: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock('../app/lib/cookies', () => ({
@@ -43,6 +44,7 @@ jest.mock('../app/lib/crypto', () => ({
   hashToken: () => 'hash',
   hashPassword: async () => 'passhash',
   verifyPassword: async () => true,
+  issuePasswordToken: async () => 'tok123',
 }));
 
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -50,7 +52,7 @@ import crypto from 'crypto';
 
 import CoursePage from '../app/course/page';
 import { POST as StripeWebhook } from '../app/api/webhooks/stripe/route';
-import { POST as RazorWebhook } from '../app/api/webhooks/razorpay/route';
+import { POST as PaymentWebhook } from '../app/api/webhook/payment/route';
 import { POST as AdminInvite } from '../app/api/admin/invite/route';
 import { POST as ForgotPassword } from '../app/api/auth/forgot/route';
 
@@ -58,7 +60,7 @@ const { sql } = require('../app/lib/db');
 const { getSession } = require('../app/lib/cookies');
 const { userHasPurchase } = require('../app/lib/access');
 const { getCourseData } = require('../app/lib/course-data');
-const { sendEmail } = require('../app/lib/email');
+const { sendEmail, sendMail } = require('../app/lib/email');
 const { requireAdminEmail } = require('../app/lib/admin');
 
 describe('/course page access', () => {
@@ -125,34 +127,37 @@ describe('webhook handlers', () => {
     expect(sendEmail).toHaveBeenCalledTimes(1);
   });
 
-  test('razorpay webhook creates user, purchase, sends email', async () => {
+  test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
-    sql
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined);
+    sql.mockResolvedValue(undefined);
 
     const event = {
       event: 'payment.captured',
       payload: {
-        payment: { entity: { email: 'b@example.com', notes: { name: 'Bob' } } },
-        order: { entity: {} },
+        payment: {
+          entity: {
+            id: 'pay_1',
+            email: 'b@example.com',
+            amount: 1000,
+            currency: 'INR',
+            notes: { email: 'b@example.com', name: 'Bob' },
+          },
+        },
       },
     };
     const raw = JSON.stringify(event);
     const sig = crypto.createHmac('sha256', 'rzp').update(raw).digest('hex');
-    const req = new Request('http://localhost/api/webhooks/razorpay', {
+    const req = new Request('http://localhost/api/webhook/payment', {
       method: 'POST',
       headers: { 'x-razorpay-signature': sig },
       body: raw,
     });
-    const res = await RazorWebhook(req);
+    const res = await PaymentWebhook(req);
     expect(res.status).toBe(200);
     const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
-    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
-    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
+    expect(sendMail).toHaveBeenCalledTimes(1);
   });
 });
 
