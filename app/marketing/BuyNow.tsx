@@ -16,19 +16,19 @@ export default function BuyNow() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/payments/create-order", {
+      const res = await fetch("/api/payments/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Payment error");
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "ORDER_CREATE_FAILED");
       }
 
       const openCheckout = () => {
         const rzp = new (window as any).Razorpay({
-          key: data.keyId,
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: data.amount,
           currency: data.currency,
           order_id: data.orderId,
@@ -65,7 +65,7 @@ export default function BuyNow() {
         }
       }
     } catch (e: any) {
-      setError(e.message || "Something went wrong");
+      setError(e.message || "Server error");
       setLoading(false);
     }
   }

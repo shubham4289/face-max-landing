@@ -8,11 +8,12 @@ if (!resendApiKey) {
 const resend = new Resend(resendApiKey);
 
 export async function sendMail(to: string, subject: string, html: string) {
-  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
-    throw new Error('Missing RESEND_API_KEY or EMAIL_FROM');
+  const from = process.env.RESEND_FROM || process.env.EMAIL_FROM;
+  if (!process.env.RESEND_API_KEY || !from) {
+    throw new Error('Missing RESEND_API_KEY or RESEND_FROM');
   }
   return await resend.emails.send({
-    from: process.env.EMAIL_FROM!,
+    from,
     to,
     subject,
     html,
