@@ -3,9 +3,13 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 
-// Toggle currency here if account switches to INR
-const CURRENCY: 'USD' | 'INR' = 'USD';
-const AMOUNT = 299 * 100; // amount in smallest currency unit
+// Toggle currency here if account switches to USD
+const CURRENCY: 'USD' | 'INR' = 'INR';
+// amount in smallest currency unit (₹24,999.00)
+const AMOUNT = 2_499_900; // easy to flip later
+
+const KEY_ID = process.env.RAZORPAY_KEY_ID!;
+const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET!;
 
 const RATE_LIMIT_MAX = 5; // requests per IP per minute
 const rateMap = new Map<string, { count: number; reset: number }>();
@@ -49,20 +53,8 @@ export async function POST(req: Request) {
 
   try {
     console.info('[create-order] starting');
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const pubKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    const appUrl = process.env.APP_URL;
-    if (!keyId || !keySecret || !pubKey || !appUrl || keyId !== pubKey) {
-      console.error('[create-order] env missing or mismatch');
-      return NextResponse.json(
-        { ok: false, error: 'ORDER_CREATE_FAILED' },
-        { status: 500 }
-      );
-    }
-
     const amount = AMOUNT;
-    const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+    const auth = Buffer.from(`${KEY_ID}:${KEY_SECRET}`).toString('base64');
     const resp = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
@@ -92,6 +84,7 @@ export async function POST(req: Request) {
       orderId: data.id,
       amount,
       currency,
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     });
   } catch (err) {
     console.error('[create-order]', err);
