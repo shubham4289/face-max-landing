@@ -50,3 +50,14 @@ For the `thefacemax.club` Vercel project, configure these environment variables:
 - `APP_URL` (should be `https://www.thefacemax.club`)
 
 The payment API defaults to USD. To switch to INR, edit the `CURRENCY` constant in `app/api/payments/create/route.ts`.
+
+## Razorpay Test vs Live
+
+Razorpay issues separate credentials for Test and Live modes. Ensure these environment variables are set for the desired mode:
+
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`
+- `RAZORPAY_WEBHOOK_SECRET`
+
+When switching modes in the Razorpay dashboard, update the variables above in Vercel so the server and client use the matching keys.

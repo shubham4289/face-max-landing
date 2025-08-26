@@ -23,12 +23,14 @@ export default function BuyNow() {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        throw new Error(data.error || "ORDER_CREATE_FAILED");
+        setError(data.error || "ORDER_CREATE_FAILED");
+        setLoading(false);
+        return;
       }
 
       const openCheckout = () => {
         const rzp = new (window as any).Razorpay({
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          key: data.keyId,
           amount: data.amount,
           currency: data.currency,
           order_id: data.orderId,
