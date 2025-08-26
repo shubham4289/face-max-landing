@@ -9,12 +9,12 @@ export default function ForgotPasswordPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
-    await fetch("/api/auth/forgot", {
+    await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    setMessage("If the account exists, we've sent instructions.");
+    setMessage("If your email is eligible, we've sent a link.");
   }
 
   return (

@@ -54,7 +54,7 @@ import CoursePage from '../app/course/page';
 import { POST as StripeWebhook } from '../app/api/webhooks/stripe/route';
 import { POST as PaymentWebhook } from '../app/api/webhook/payment/route';
 import { POST as AdminInvite } from '../app/api/admin/invite/route';
-import { POST as ForgotPassword } from '../app/api/auth/forgot/route';
+import { POST as ForgotPassword } from '../app/api/auth/forgot-password/route';
 
 const { sql } = require('../app/lib/db');
 const { getSession } = require('../app/lib/cookies');
@@ -193,31 +193,29 @@ describe('forgot password', () => {
   });
 
   test('sends email only for buyers', async () => {
-    sql
-      .mockResolvedValueOnce([{ id: 'u1' }])
-      .mockResolvedValueOnce([{ count: 0 }])
-      .mockResolvedValueOnce(undefined);
-    userHasPurchase.mockResolvedValue(true);
-    const req = new Request('http://localhost/api/auth/forgot', {
+    sql.mockResolvedValueOnce([{ purchased: true }]);
+    const req = new Request('http://localhost/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email: 'buyer@example.com' }),
     });
     const res = await ForgotPassword(req);
     expect(res.status).toBe(200);
-    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(sendMail).toHaveBeenCalledTimes(1);
+    expect(sendMail).toHaveBeenCalledWith(
+      'buyer@example.com',
+      'Reset your password – The Ultimate Implant Course',
+      expect.stringContaining('tok123')
+    );
   });
 
   test('non-buyers do not receive email', async () => {
-    sql
-      .mockResolvedValueOnce([{ id: 'u2' }])
-      .mockResolvedValueOnce([{ count: 0 }]);
-    userHasPurchase.mockResolvedValue(false);
-    const req = new Request('http://localhost/api/auth/forgot', {
+    sql.mockResolvedValueOnce([{ purchased: false }]);
+    const req = new Request('http://localhost/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email: 'nobuyer@example.com' }),
     });
     const res = await ForgotPassword(req);
     expect(res.status).toBe(200);
-    expect(sendEmail).not.toHaveBeenCalled();
+    expect(sendMail).not.toHaveBeenCalled();
   });
 });
