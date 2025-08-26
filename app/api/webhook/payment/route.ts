@@ -4,26 +4,20 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { sql } from '@/app/lib/db';
 import { ensureTables } from '@/app/lib/bootstrap';
-import {
-  randomId,
-  issuePasswordToken,
-} from '@/app/lib/crypto';
+import { randomId, issuePasswordToken } from '@/app/lib/crypto';
 import { sendMail } from '@/app/lib/email';
 import { COURSE_ID } from '@/app/lib/course-ids';
 
 export async function POST(req: Request) {
-  const rawBody = await req.text();
-  const signature = req.headers.get('x-razorpay-signature') || '';
+  const raw = await req.text();
+  const sig = req.headers.get('x-razorpay-signature') ?? '';
   const expected = crypto
     .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(rawBody, 'utf8')
+    .update(raw, 'utf8')
     .digest('hex');
   let valid = false;
-  if (signature.length === expected.length) {
-    valid = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
-    );
+  if (sig.length === expected.length) {
+    valid = crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
   }
   if (!valid) {
     console.warn('razorpay webhook invalid signature');
@@ -33,42 +27,23 @@ export async function POST(req: Request) {
     );
   }
 
+  const evt = JSON.parse(raw);
+  if (evt.event !== 'payment.captured') {
+    return NextResponse.json({ ok: true });
+  }
+
+  const entity = evt.payload?.payment?.entity ?? {};
+  const email = (entity.email || entity.notes?.email || '').toLowerCase();
+  if (!email) {
+    return NextResponse.json({ ok: true, note: 'no email' });
+  }
+  const name = entity.notes?.name || entity.contact_name || '';
+  const phone = entity.contact || entity.notes?.phone || null;
+  const paymentId = entity.id;
+  const amount = entity.amount;
+  const currency = entity.currency;
+
   try {
-    const event = JSON.parse(rawBody);
-    if (event.event !== 'payment.captured') {
-      return NextResponse.json({ ok: true });
-    }
-
-    const pmt = event.payload?.payment?.entity ?? {};
-    const ord = event.payload?.order?.entity ?? {};
-    const email = (
-      pmt.email ||
-      ord.email ||
-      event.payload?.customer?.email ||
-      ''
-    ).toLowerCase();
-    if (!email) {
-      return NextResponse.json(
-        { ok: false, error: 'No email in event' },
-        { status: 400 }
-      );
-    }
-    const rawName =
-      pmt.notes?.name ||
-      ord.notes?.name ||
-      event.payload?.customer?.name ||
-      (email ? email.split('@')[0] : '');
-    const name = (rawName && String(rawName).trim()) || 'Student';
-    const phone = pmt.contact || ord.contact || event.payload?.customer?.contact || null;
-
-    const paymentId = pmt.id;
-    const amount = pmt.amount;
-    const currency = pmt.currency;
-    if (!paymentId || !amount || !currency) {
-      console.error('razorpay webhook missing fields');
-      return NextResponse.json({ ok: true });
-    }
-
     await ensureTables();
 
     const rows = (await sql`
@@ -79,34 +54,40 @@ export async function POST(req: Request) {
           phone = COALESCE(EXCLUDED.phone, users.phone),
           purchased = true
       RETURNING id;
-    `) as { id: string }[];
-    const userId = rows[0]?.id;
+    `) as { id: string }[] | undefined;
+    const userId = Array.isArray(rows) ? rows[0]?.id : undefined;
 
+    let newPurchase = false;
     if (userId) {
-      await sql`
-        INSERT INTO purchases(user_id, course_id)
-        VALUES(${userId}, ${COURSE_ID})
-        ON CONFLICT DO NOTHING;
-      `;
+      const res = (await sql`
+        INSERT INTO purchases(user_id, course_id, payment_id)
+        VALUES(${userId}, ${COURSE_ID}, ${paymentId})
+        ON CONFLICT (payment_id) DO NOTHING
+        RETURNING 1;
+      `) as unknown[] | undefined;
+      newPurchase = Array.isArray(res) && res.length > 0;
     }
 
     await sql`
       INSERT INTO payments(id, provider, email, amount, currency, payload)
-      VALUES(${paymentId}, 'razorpay', ${email}, ${amount}, ${currency}, ${event})
+      VALUES(${paymentId}, 'razorpay', ${email}, ${amount}, ${currency}, ${evt})
       ON CONFLICT DO NOTHING;
     `;
 
-    const token = await issuePasswordToken(email, 'set', 120);
-    const appUrl = process.env.APP_URL || 'https://thefacemax.com';
-    const link = `${appUrl}/auth/set-password?token=${token}`;
-    await sendMail(
-      email,
-      'Set your password – The Ultimate Implant Course',
-      `<p><a href="${link}">Click here to set your password</a>. This link is valid for 2 hours.</p>`
-    );
+    if (newPurchase) {
+      const token = await issuePasswordToken(email, 'set', 120);
+      const appUrl = process.env.APP_URL || 'https://thefacemax.com';
+      const link = `${appUrl}/auth/set-password?token=${token}`;
+      await sendMail(
+        email,
+        'Set your password – The Ultimate Implant Course',
+        `<p><a href="${link}">Click here to set your password</a>. This link is valid for 2 hours.</p>`
+      );
+    }
   } catch (err) {
-    console.error(err);
+    console.error('[webhook]', err);
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true }, { status: 200 });
 }
