@@ -29,6 +29,11 @@ export async function ensureTables() {
     END $$;
   `;
 
+  // Ensure new optional fields and constraints on users
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT;`;
+  await sql`ALTER TABLE users ALTER COLUMN name DROP NOT NULL;`;
+  await sql`ALTER TABLE users ALTER COLUMN name SET DEFAULT '';`;
+
   // OTPS (already used for login)
   await sql`
     CREATE TABLE IF NOT EXISTS otps (
@@ -75,6 +80,18 @@ export async function ensureTables() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
+
+  // PURCHASES
+  await sql`
+    CREATE TABLE IF NOT EXISTS purchases (
+      user_id TEXT NOT NULL REFERENCES users(id),
+      course_id TEXT NOT NULL,
+      payment_id TEXT UNIQUE,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      PRIMARY KEY (user_id, course_id)
+    );
+  `;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS purchases_payment_id_key ON purchases(payment_id);`;
 
   // PASSWORD TOKENS
   await sql`
