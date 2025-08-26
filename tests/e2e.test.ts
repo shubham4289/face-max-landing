@@ -45,6 +45,7 @@ jest.mock('../app/lib/crypto', () => ({
   hashPassword: async () => 'passhash',
   verifyPassword: async () => true,
   issuePasswordToken: async () => 'tok123',
+  safeEqualHex: () => true,
 }));
 
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -129,7 +130,10 @@ describe('webhook handlers', () => {
 
   test('razorpay webhook marks user purchased, logs payment, sends email', async () => {
     process.env.RAZORPAY_WEBHOOK_SECRET = 'rzp';
-    sql.mockResolvedValue(undefined);
+    sql
+      .mockResolvedValueOnce([{ id: 'u1' }])
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
 
     const event = {
       event: 'payment.captured',
@@ -156,6 +160,7 @@ describe('webhook handlers', () => {
     expect(res.status).toBe(200);
     const queries = sql.mock.calls.map((c: any[]) => c[0].join(''));
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
+    expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
     expect(sendMail).toHaveBeenCalledTimes(1);
   });
