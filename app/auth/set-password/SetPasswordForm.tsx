@@ -25,8 +25,17 @@ export default function SetPasswordForm({ token }: SetPasswordFormProps) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),
     });
-
-    setMessage(res.ok ? "Password updated" : "Error");
+    if (res.ok) {
+      const data = await res.json().catch(() => null);
+      if (data?.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
+      setMessage("Password updated");
+    } else {
+      const data = await res.json().catch(() => null);
+      setMessage(data?.error || "Error");
+    }
   }
 
   return (
