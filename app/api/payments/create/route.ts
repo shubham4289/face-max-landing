@@ -3,10 +3,8 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 
-// Toggle currency here if account switches to USD
 const CURRENCY: 'USD' | 'INR' = 'INR';
-// amount in smallest currency unit (₹24,999.00)
-const AMOUNT = 2_499_900; // easy to flip later
+const AMOUNT = 299 * 100;
 
 const KEY_ID = process.env.RAZORPAY_KEY_ID!;
 const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET!;
@@ -43,8 +41,7 @@ export async function POST(req: Request) {
   }
 
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-  const name =
-    typeof body.name === 'string' ? body.name.trim().slice(0, 64) : undefined;
+  const name = typeof body.name === 'string' ? body.name.trim().slice(0, 64) : undefined;
   const currency = CURRENCY;
   const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   if (!email || !emailRegex.test(email)) {
@@ -52,9 +49,10 @@ export async function POST(req: Request) {
   }
 
   try {
-    console.info('[create-order] starting');
     const amount = AMOUNT;
     const auth = Buffer.from(`${KEY_ID}:${KEY_SECRET}`).toString('base64');
+    const notes: Record<string, string> = { email };
+    if (name) notes.name = name;
     const resp = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
@@ -65,20 +63,16 @@ export async function POST(req: Request) {
         amount,
         currency,
         receipt: 'order_' + Date.now(),
-        notes: { email, name },
+        notes,
       }),
     });
 
     if (!resp.ok) {
-      console.error('[create-order] failed', await resp.text());
-      return NextResponse.json(
-        { ok: false, error: 'ORDER_CREATE_FAILED' },
-        { status: 500 }
-      );
+      console.error('[create-order]', await resp.text());
+      return NextResponse.json({ ok: false, error: 'ORDER_CREATE_FAILED' }, { status: 500 });
     }
 
     const data = await resp.json();
-    console.info('[create-order] success', { orderId: data.id });
     return NextResponse.json({
       ok: true,
       orderId: data.id,
@@ -98,3 +92,4 @@ export async function POST(req: Request) {
 export async function GET() {
   return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }
+

@@ -14,7 +14,7 @@ jest.mock('@/app/lib/db', () => ({
 }));
 
 jest.mock('../app/lib/bootstrap', () => ({
-  ensureTables: Promise.resolve(),
+  ensureTables: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock('../app/lib/email', () => ({
@@ -216,7 +216,7 @@ describe('webhook handlers', () => {
     expect(queries.some((q: string) => q.includes('INSERT INTO users'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO payments'))).toBe(true);
     expect(queries.some((q: string) => q.includes('INSERT INTO purchases'))).toBe(true);
-    const payUser = sql.mock.calls[1][1];
+    const payUser = sql.mock.calls[1][2];
     const purchaseUser = sql.mock.calls[2][1];
     expect(payUser).toBe(userId);
     expect(purchaseUser).toBe(userId);

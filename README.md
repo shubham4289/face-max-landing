@@ -67,11 +67,18 @@ When switching modes in the Razorpay dashboard, update the variables above in Ve
 The application bootstraps its PostgreSQL schema at runtime via `ensureTables` in `app/lib/bootstrap.ts`. It creates or updates the following tables:
 
 - **users**: `id` UUID primary key, `email` unique lowercase text, optional `name` and `phone`, `is_admin` boolean, `password_hash`, `created_at` timestamp.
-- **purchases**: records entitlements with `user_id` UUID FK to `users`, `product`, `amount_cents`, `currency`, `provider`, optional `provider_order_id`, `created_at`.
-- **payments**: logs payment events with `user_id` UUID FK, `provider`, `provider_payment_id`, `status`, `amount_cents`, `currency`, raw JSON payload, `created_at`, and uniqueness on `(provider, provider_payment_id)`.
+- **purchases**: records entitlements with `user_id` UUID FK to `users`, `product`, `amount_cents`, `currency`, `provider`, `created_at`.
+- **payments**: logs payment events with `user_id` UUID FK, `provider`, `provider_payment_id`, `status`, `amount_cents`, `currency`, raw JSON payload, `created_at`, and uniqueness on `provider_payment_id`.
 
 Run the migration locally by importing and awaiting `ensureTables` or starting the dev server. On deploy, this promise runs automatically to keep the schema in sync.
 
 ## Schema guard
 
 `ensureTables` also acts as a schema guard. On startup it adds missing `user_id` columns to `payments` and `purchases`, wires their foreign keys to `users(id)` with `ON DELETE CASCADE`, ensures the `users` table exists with required fields, and maintains a unique index on `lower(email)`.
+
+## Payments Schema & Idempotent Webhook
+
+- `payments.provider_payment_id` has a unique constraint so duplicate events do not create extra rows.
+- The Razorpay webhook inserts into `payments` and `purchases` using `ON CONFLICT DO NOTHING` for DB-level idempotency.
+- The webhook performs no schema changes; all DDL lives in `ensureTables()`.
+- `ensureTables()` is safe to call multiple times and should run once at startup, not on each request.
