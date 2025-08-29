@@ -3,10 +3,9 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { sql } from '@/app/lib/db';
-import { issuePasswordToken } from '@/app/lib/crypto';
-import { sendMail } from '@/app/lib/email';
 import { COURSE_ID } from '@/app/lib/course-ids';
-import { upsertUserByEmail } from '@/app/lib/users';
+import { sendWelcomeEmail } from '@/app/lib/email';
+import { issuePasswordToken } from '@/app/lib/crypto';
 
 export async function POST(req: Request) {
   const reqId = crypto.randomUUID();
@@ -16,7 +15,7 @@ export async function POST(req: Request) {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
     if (!secret) {
       console.error(`[webhook ${reqId}] missing secret`);
-      return NextResponse.json({ ok: false }, { status: 500 });
+      return new NextResponse('server error', { status: 500 });
     }
     const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex');
     const valid =
@@ -24,59 +23,91 @@ export async function POST(req: Request) {
       expected.length === sig.length &&
       crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
     if (!valid) {
-      return NextResponse.json({ ok: false }, { status: 400 });
+      return new NextResponse('invalid signature', { status: 400 });
     }
 
     const evt = JSON.parse(raw);
     if (evt.event !== 'payment.captured') {
-      return NextResponse.json({ ok: true });
+      return new NextResponse('ok');
     }
 
     const entity = evt.payload?.payment?.entity || {};
-    const email = (entity.email || entity.notes?.email || entity.contact || '').toLowerCase();
-    if (!email) {
-      console.error(`[webhook ${reqId}] missing email`);
-      return NextResponse.json({ ok: true });
+    const paymentId: string = entity.id || '';
+    const emailRaw: string | undefined =
+      entity.email || entity.notes?.email || entity.contact;
+    const email = emailRaw ? String(emailRaw).trim().toLowerCase() : '';
+    const name: string | null =
+      entity.notes?.name || entity.contact_name || null;
+    const phone: string | null =
+      entity.contact || entity.notes?.phone || null;
+    const amount = typeof entity.amount === 'number' ? entity.amount : 0;
+    const currency: string = entity.currency || 'INR';
+
+    let userId: string | null = null;
+    if (email) {
+      const users = (await sql`
+        SELECT id FROM users WHERE lower(email)=lower(${email}) LIMIT 1;
+      `) as { id: string }[];
+      if (users.length === 0) {
+        const inserted = (await sql`
+          INSERT INTO users(email, name, phone)
+          VALUES(${email}, ${name}, ${phone})
+          RETURNING id;
+        `) as { id: string }[];
+        userId = inserted[0].id;
+      } else {
+        userId = users[0].id;
+        if (name || phone) {
+          await sql`
+            UPDATE users
+            SET name = COALESCE(${name}, name),
+                phone = COALESCE(${phone}, phone)
+            WHERE id=${userId};
+          `;
+        }
+      }
     }
-    const name = entity.notes?.name || entity.contact_name || null;
-    const phone = entity.contact || entity.notes?.phone || null;
-    const amountCents = entity.amount || 0;
-    const currency = entity.currency || 'INR';
-    const paymentId = entity.id || '';
 
-    const user = await upsertUserByEmail({ email, name, phone });
-    const userId = user.id;
-
-    const payRows = (await sql`
-      INSERT INTO payments (provider, provider_payment_id, status, user_id, amount_cents, currency, raw)
-      VALUES ('razorpay', ${paymentId}, 'captured', ${userId}, ${amountCents}, ${currency}, ${JSON.stringify(evt)})
-      ON CONFLICT (provider_payment_id) DO NOTHING
-      RETURNING id;
+    const existingPay = (await sql`
+      SELECT id FROM payments WHERE provider_payment_id=${paymentId} LIMIT 1;
     `) as { id: string }[];
-
-    if (payRows.length === 0) {
-      return NextResponse.json({ ok: true });
+    if (existingPay.length === 0) {
+      await sql`
+        INSERT INTO payments(provider, provider_payment_id, amount_cents, currency, status, raw, user_id)
+        VALUES('razorpay', ${paymentId}, ${amount}, ${currency}, 'captured', ${JSON.stringify(evt)}, ${userId});
+      `;
     }
 
-    await sql`
-      INSERT INTO purchases (user_id, product, amount_cents, currency, provider)
-      VALUES (${userId}, ${COURSE_ID}, ${amountCents}, ${currency}, 'razorpay')
-      ON CONFLICT (user_id, product) DO NOTHING;
-    `;
+    if (userId) {
+      const existingPurchase = (await sql`
+        SELECT id FROM purchases WHERE user_id=${userId} AND product=${COURSE_ID} LIMIT 1;
+      `) as { id: string }[];
+      if (existingPurchase.length === 0) {
+        await sql`
+          INSERT INTO purchases(user_id, product, amount_cents, currency, provider)
+          VALUES(${userId}, ${COURSE_ID}, ${amount}, ${currency}, 'razorpay');
+        `;
+      }
 
-    const token = await issuePasswordToken(user.email, 'set', 120);
-    const appUrl = process.env.APP_URL || 'https://thefacemax.com';
-    const link = `${appUrl}/auth/set-password?token=${token}`;
-    await sendMail(
-      user.email,
-      'Welcome to The Ultimate Implant Course',
-      `<p>Welcome to The Ultimate Implant Course.</p><p><a href="${link}">Click here to set your password</a>. This link is valid for 2 hours.</p>`
-    );
+      if (email) {
+        let token: string;
+        const tokenRows = (await sql`
+          SELECT token FROM password_tokens
+          WHERE email=${email} AND purpose='set' AND expires_at > now()
+          ORDER BY expires_at DESC LIMIT 1;
+        `) as { token: string }[];
+        if (tokenRows.length > 0) {
+          token = tokenRows[0].token;
+        } else {
+          token = await issuePasswordToken(email, 'set', 1440);
+        }
+        await sendWelcomeEmail({ to: email, name, token });
+      }
+    }
 
-    return NextResponse.json({ ok: true });
+    return new NextResponse('ok');
   } catch (err) {
-    console.error(`[webhook ${reqId}]`, err);
-    return NextResponse.json({ ok: false }, { status: 500 });
+    console.error('[webhook', reqId, '] error', err);
+    return new NextResponse('server error', { status: 500 });
   }
 }
-

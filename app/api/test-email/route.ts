@@ -3,7 +3,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { sendEmail } from '../../lib/email'; // <-- relative path
+import { sendWelcomeEmail } from '@/app/lib/email';
+import { randomId } from '@/app/lib/crypto';
 
 export async function GET(req: Request) {
   try {
@@ -13,11 +14,8 @@ export async function GET(req: Request) {
       return NextResponse.json({ ok: false, error: "missing ?to=" }, { status: 400 });
     }
 
-    const r = await sendEmail(
-      to,
-      'The Face Max — test email ✅',
-      `<p>Hello from the site. If you got this, Resend + domain setup works.</p>`
-    );
+    const token = randomId(32);
+    const r = await sendWelcomeEmail({ to, name: null, token });
     return NextResponse.json({ ok: true, result: r });
   } catch (e: any) {
     console.error(e);
