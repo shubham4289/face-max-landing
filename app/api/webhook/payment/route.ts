@@ -72,9 +72,10 @@ export async function POST(req: Request) {
       SELECT id FROM payments WHERE provider_payment_id=${paymentId} LIMIT 1;
     `) as { id: string }[];
     if (existingPay.length === 0) {
+      const id = crypto.randomUUID();
       await sql`
-        INSERT INTO payments(provider, provider_payment_id, amount_cents, currency, status, raw, user_id)
-        VALUES('razorpay', ${paymentId}, ${amount}, ${currency}, 'captured', ${JSON.stringify(evt)}, ${userId});
+        INSERT INTO payments(id, provider, provider_payment_id, amount_cents, currency, status, raw, user_id)
+        VALUES(${id}, 'razorpay', ${paymentId}, ${amount}, ${currency}, 'captured', ${JSON.stringify(evt)}, ${userId});
       `;
     }
 
