@@ -7,11 +7,24 @@ export async function ensureTables(): Promise<void> {
     CREATE TABLE IF NOT EXISTS users (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
       email text NOT NULL UNIQUE,
+      password_hash text NULL,
       name text NULL,
       phone text NULL,
-      is_admin boolean DEFAULT false,
-      created_at timestamptz DEFAULT now()
+      is_admin boolean DEFAULT false NOT NULL,
+      created_at timestamptz DEFAULT now() NOT NULL
     );
+  `;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash text NULL;`;
+  await sql`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'password_hash' AND is_nullable = 'NO'
+      ) THEN
+        ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+      END IF;
+    END $$;
   `;
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_idx ON users (lower(email));`;
 
